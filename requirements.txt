@@ -1,0 +1,7 @@
+aiohttp==3.8.4
+psutil==5.9.5
+pywebview==3.7.2
+pythonnet==2.5.1; sys_platform=="win32"
+cefpython3==66.1; sys_platform=="win32"
+PySide6==6.5.0; sys_platform=="linux"
+QtPy==2.3.1; sys_platform=="linux"

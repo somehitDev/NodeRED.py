@@ -1,0 +1,12 @@
+{
+    "name": "noderedpy-starter",
+    "description": "nodered.py NodeRED starter",
+    "version": "1.0.0",
+    "author": "oyajiDev",
+    "license": "MIT",
+    "dependencies": {
+        "argparse": "^2.0.1",
+        "node-red": "^3.0.2",
+        "node-red-contrib-flow-manager": "^0.7.4"
+    }
+}

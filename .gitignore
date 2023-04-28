@@ -1,0 +1,10 @@
+.vscode
+.node-red*
+env
+dist
+build
+*.egg-info
+dev_scripts
+__pycache__
+reference
+node_modules
