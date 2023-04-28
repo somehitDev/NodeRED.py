@@ -18,7 +18,7 @@ setup(
     name = "nodered.py",
     author = __author__,
     author_email = __email__,
-    url = "https://github.com/oyajiDev/hufpy",
+    url = "https://github.com/oyajiDev/NodeRED.py",
     version = __version__,
     python_requires = ">=3.9",
     install_requires = requires,
