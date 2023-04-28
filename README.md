@@ -63,7 +63,7 @@ def test(props:dict, msg:dict) -> dict:
     # user codes here
     return msg
 ```
-- See <a href="">noredpy.decorator.register function</a> for details
+- See <a href="https://github.com/oyajiDev/NodeRED.py/blob/08b2295ab537be97ad9e9a2f94154cdcb36685d0/noderedpy/decorator.py#L8">noredpy.decorator.register function</a> for details
 <br/>
 
 ### start server
