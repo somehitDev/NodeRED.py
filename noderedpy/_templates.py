@@ -17,17 +17,81 @@ def package_json(node:"noderedpy._nodered.Node") -> str:
     }, indent = 4)
 
 def node_html(node:"noderedpy._nodered.Node") -> str:
-    properties_html, properties_js = [], []
+    properties_html, properties_js, properties_js_prepare, properties_js_cancel, properties_js_save = [], [], [], [], []
     for property in node.properties:
-        properties_html.append(f"""
+        if property.type in ( "str", "int", "float" ):
+            properties_html.append(f"""
+    <div class="form-row" style="margin-bottom:0px;">
+        <label><i class="{property.display_icon}"></i> <span>{property.display_name}</span></label>
+    </div>
     <div class="form-row">
-        <label for="node-input-{property.name}"><i class="fa fa-tag"></i> <span>{property.name.capitalize()}</span></label>
-        <input type="text" id="node-input-{property.name}" style="width:calc(100% - 105px);">
+        <input type="text" id="node-input-{property.name}">
     </div>
 """)
+        elif property.type == "list":
+            properties_html.append(f"""
+    <div class="form-row" style="margin-bottom:0px;">
+        <label><i class="{property.display_icon}"></i> <span>{property.display_name}</span></label>
+    </div>
+    <div class="form-row node-input-{property.name}-container-row">
+        <ol id="node-input-{property.name}-container" style="height:250px;"></ol>
+    </div>
+""")
+            properties_js_prepare.append('''
+            $("#node-input-''' + property.name + '''-container").editableList({
+                addItem: (container, idx, opt) => {
+                    opt.idx = idx;
+                    opt.value = opt.value ?? "";
+
+                    container.css({ overflow: "hidden", display: "flex", "align-items": "center" });
+                    $("<input>", { class: "input-list-item", type: "text", style:"flex:1;" }).val(opt.value).appendTo(container);
+                },
+                removable: true
+            });
+
+            for (var item of this.''' + property.name + ''') {
+                $("#node-input-''' + property.name + '''-container").editableList("addItem", { value: item });
+            }
+''')
+            properties_js_save.append('''
+            this.''' + property.name + ''' = [];
+            $("#node-input-''' + property.name + '''-container").editableList("items").each((_, item) => {
+                this.''' + property.name + '''.push(item.find("input.input-list-item").val());
+            });
+''')
+        else:
+            properties_html.append(f"""
+    <div class="form-row" style="margin-bottom:0px;">
+        <label><i class="{property.display_icon}"></i> <span>{property.display_name}</span></label>
+    </div>
+    <div class="form-row node-text-editor-row">
+        <div style="height:250px;" class="node-text-editor" id="node-input-{property.name}"></div>
+    </div>
+""")
+            properties_js_prepare.append('''
+            this.''' + property.name + '''Editor = RED.editor.createEditor({
+                id: "node-input-''' + property.name + '''",
+                mode: "ace/mode/json",
+                value: this.''' + property.name + ''',
+                focus: true
+            });
+''')
+            properties_js_cancel.append(f"""
+            this.{property.name}Editor.destroy();
+            delete this.{property.name}Editor;
+""")
+            properties_js_save.append(f"""
+            $("#node-input-{property.name}").val(this.{property.name}Editor.getValue().trim());
+            this.{property.name}Editor.destroy();
+            delete this.{property.name}Editor;
+""")
+                                   
         if property.default_value:
-            default_value = f'"{property.default_value}"' if property.type == "str" else f"{property.default_value}"
-            properties_js.append("            " + property.name + ': { value: ' + default_value + ' }')
+            default_value = f'"{property.default_value}"' if property.type == "str" else f"`{json.dumps(property.default_value, indent = 4)}`" if property.type == "dict" else str(property.default_value)
+        else:
+            default_value = '""' if property.type == "str" else "[]" if property.type == "list" else '"{}"' if property.type == "dict" else "0"
+
+        properties_js.append("            " + property.name + ': { value: ' + default_value + ' }')
 
     return '''
 <script type="text/html" data-template-name="''' + node.name + '''">
@@ -49,7 +113,18 @@ def node_html(node:"noderedpy._nodered.Node") -> str:
         },
         inputs: 1, outputs: 1,
         icon: "function.png",
-        label: () => this.name
+        label: function() {
+            return this.name;
+        },
+        oneditprepare: function() {
+''' + "\n".join(properties_js_prepare) + '''
+        },
+        oneditcancel: function() {
+''' + "\n".join(properties_js_cancel) + '''
+        },
+        oneditsave: function() {
+''' + "\n".join(properties_js_save) + '''
+        }
     });
 </script>
 '''
@@ -91,7 +166,11 @@ module.exports = function(RED) {
 
             var configToSend = {};
             for (var name of ''' + str([ property.name for property in node.properties]) + ''') {
-                configToSend[name] = config[name];
+                var config_item = config[name];
+                if (typeof(config_item) == "string" && (config_item.startsWith("{") && config_item.endsWith("}"))) {
+                    config_item = JSON.parse(config_item);
+                }
+                configToSend[name] = config_item;
             }
 
             node.status({ fill: "green", shape: "dot", text: "Running" });

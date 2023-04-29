@@ -8,7 +8,11 @@ if __name__ == "__main__":
     class TotalApp:
         count = 0
 
-        @register("test", properties = [ NodeProperty("test_prop", "str", "1234") ])
+        @register("test", properties = [
+            NodeProperty("test_prop", "str", "1234"),
+            NodeProperty("list_prop", "list", [ 1, 2, 3, 4 ]),
+            NodeProperty("dict_prop", "dict", { "a": 1 })
+        ])
         def test(props:dict, msg:dict) -> dict:
             TotalApp.count += 1
 

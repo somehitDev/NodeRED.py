@@ -11,6 +11,7 @@ parser.add_argument("--user-dir", { type: "str" });
 parser.add_argument("--admin-root", { type: "str" });
 parser.add_argument("--port", { type: "int" });
 parser.add_argument("--user-category", { type: "str", default: "" });
+parser.add_argument("--show-default-category", { type: "str" });
 const args = parser.parse_args();
 
 // parse user-category
@@ -31,14 +32,35 @@ const exapp = express();
 const RED_server = http.createServer(exapp);
 
 // set configs
-RED.init(RED_server, {
+let opts = {
     editorTheme: { projects: { enabled: false } },
     httpAdminRoot: args["admin_root"].startsWith("/") ? args["admin_root"] : `/${args["admin_root"]}`,
     httpNodeRoot: "/",
     flowFile: "noderedpy.json",
     userDir: args["user_dir"],
-    paletteCategories: args["user_category"].concat([ "subflows", "flow", "input", "output", "function", "parser", "social", "mobile", "storage", "analysis", "advanced" ])
-});
+    paletteCategories: args["show_default_category"] == "true" ? args["user_category"].concat([ "subflows", "common", "function", "network", "sequence", "parser", "storage" ]) : args["user_category"]
+};
+// if (![ "None", "null", "" ].includes(args["admin_auth"])) {
+//     opts.adminAuth = {
+//         type: "credentials",
+//         users: [
+//             {
+//                 username: "nodered-py",
+//                 password: args["admin_auth"],
+//                 permissions: "*"
+//             }
+//         ]
+//     };
+//     opts.httpNodeAuth = {
+//         user: "nodered-py", pass: args["admin_auth"]
+//     };
+
+//     fs.writeFileSync(path.join(args["user_dir"], "settings.js"), `
+// module.exports = ${JSON.stringify(opts, space = 4)};
+// `);
+// }
+
+RED.init(RED_server, opts);
 
 // node-red default routes
 exapp.use("/", express.static("web"));

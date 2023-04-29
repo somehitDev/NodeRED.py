@@ -78,4 +78,4 @@ server.start("{title}")
 <br/><br/>
 
 ## Todos
-[ ] type support for "list" and "dict".
+[x] type support for "list" and "dict"

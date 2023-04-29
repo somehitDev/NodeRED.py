@@ -10,21 +10,23 @@ class RED:
     """
     Node-RED manager class
     """
-    def __init__(self, node_red_user_dir:str, node_red_admin_root:str, node_red_port:int = 1880):
+    def __init__(self, user_dir:str, admin_root:str, port:int = 1880, show_default_category:bool = True):
         """
         Set configs of Node-RED and setup
 
         Parameters
         ----------
-        node_red_user_dir: str, required
+        user_dir: str, required
             userDir of Node-RED settings
-        node_red_admin_root: str, required
+        admin_root: str, required
             httpAdminRoot of Node-RED settings
-        node_red_port: int, default 1880
+        port: int, default 1880
             port of Node-RED server
+        show_default_category: bool, default True
+            show default categories of Node-RED or not
         """
-        self.node_red_user_dir, self.node_red_admin_root, self.node_red_port =\
-            node_red_user_dir, node_red_admin_root, node_red_port
+        self.user_dir, self.admin_root, self.port, self.show_default_category =\
+            user_dir, admin_root, port, show_default_category
 
         # setup Node-RED starter
         subprocess.call(
@@ -70,9 +72,10 @@ class RED:
         args = [
             "node",
             "index.js",
-            f"--user-dir={self.node_red_user_dir}",
-            f"--admin-root={self.node_red_admin_root}",
-            f"--port={self.node_red_port}"
+            f"--user-dir={self.user_dir}",
+            f"--admin-root={self.admin_root}",
+            f"--port={self.port}",
+            f"--show-default-category={'true' if self.show_default_category else 'false'}"
         ]
         if server:
             args.append(
@@ -104,7 +107,7 @@ class RED:
         for process in psutil.process_iter():
             try:
                 for conns in process.connections(kind = "inet"):
-                    if conns.laddr.port == self.node_red_port:
+                    if conns.laddr.port == self.port:
                         process.send_signal(signal.SIGTERM)
                         killed = True
                         break
@@ -128,7 +131,7 @@ class NodeProperty:
     """
     Property for Node function
     """
-    def __init__(self, name:str, type:Literal["str", "int", "float"], default_value:Any = None, required:bool = False):
+    def __init__(self, name:str, type:Literal["str", "int", "float", "list", "dict"], default_value:Any = None, required:bool = False, display_icon:str = None):
         """
         Property information for Node function
 
@@ -142,15 +145,39 @@ class NodeProperty:
             default value of Property
         required: bool, default False
             set Property is required or not
+        display_icon: str, default None
+            icon for Node-RED node display
         """
         if " " in name.strip():
             raise NameError("Property name cannot contain space!")
         
-        if not type in ("str", "int", "float"):
-            raise TypeError("Currently supported types: [ 'str', 'int', 'float' ]")
+        if not type in ("str", "int", "float", "list", "dict"):
+            raise TypeError("Currently supported types: [ 'str', 'int', 'float', 'list', 'dict' ]")
+        
+        if default_value is not None and not isinstance(default_value, ( str, int, float, list, dict )):
+            raise TypeError("Currently supported value types: [ str, int, float, list, dict ]")
 
         self.name, self.type, self.default_value, self.required =\
             name, type, default_value, required
+        
+        if display_icon is None:
+            if type in ( "int", "float" ):
+                self.display_icon = "fa fa-sort-numeric-asc"
+            elif type == "str":
+                self.display_icon = "fa fa-font"
+            elif type == "list":
+                self.display_icon = "fa fa-list"
+            elif type == "dict":
+                self.display_icon = "fa fa-code"
+        else:
+            self.display_icon = display_icon
+        
+    @property
+    def display_name(self) -> str:
+        return " ".join([
+            item.capitalize()
+            for item in self.name.split("_")
+        ])
 
 class Node:
     def __init__(self, name:str, category:str, properties:List[NodeProperty], node_func:MethodType):

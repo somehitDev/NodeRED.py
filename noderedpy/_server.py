@@ -40,7 +40,7 @@ class Server(web.Application):
     def __on_started(self):
         if self.__show_browser:
             import webbrowser
-            webbrowser.open_new(f"http://127.0.0.1:{self.__red.node_red_port}/node-red")
+            webbrowser.open_new(f"http://127.0.0.1:{self.__red.port}/node-red")
 
         if self.__start_callback:
             self.__start_callback()
@@ -81,16 +81,16 @@ class Server(web.Application):
         self.__red.start(callback = self.__on_started, server = Server)
 
         # remove existing nodes
-        for node_dir in glob(os.path.join(self.__red.node_red_user_dir, "node_modules", "nodered-py-*")):
+        for node_dir in glob(os.path.join(self.__red.user_dir, "node_modules", "nodered-py-*")):
             shutil.rmtree(node_dir)
 
         # create nodes
         for node in Server.registered_nodes:
-            node.create(self.__red.node_red_user_dir, port)
+            node.create(self.__red.user_dir, port)
 
         # map nodes to route
         self.add_routes([
-            web.get("", lambda _: web.HTTPFound(f"http://127.0.0.1:{self.__red.node_red_port}/node-red")),
+            web.get("", lambda _: web.HTTPFound(f"http://127.0.0.1:{self.__red.port}/node-red")),
             web.post("/nodes/{node_name}", lambda req: self.__call_node(req, req.match_info["node_name"]))
         ])
 
@@ -178,9 +178,9 @@ class StandaloneServer:
             port for Server
         default_root: str, default None
             default url root to show
-            if None, use node_red_admin_root of Node-RED settings
+            if None, use admin_root of Node-RED settings
         """
-        default_root = self.__red.node_red_admin_root if default_root is None else default_root
+        default_root = self.__red.admin_root if default_root is None else default_root
         if not default_root.startswith("/"):
             raise ValueError("default_root must startswith '/'!")
 
@@ -190,4 +190,4 @@ class StandaloneServer:
         win = webview.create_window(title, width = width, height = height, x = x, y = y)
         win.events.closing += self.__server.stop
 
-        webview.start(lambda: self.__server.start(port, False, lambda: win.load_url(f"http://127.0.0.1:{self.__red.node_red_port}{default_root}")), debug = debug)
+        webview.start(lambda: self.__server.start(port, False, lambda: win.load_url(f"http://127.0.0.1:{self.__red.port}{default_root}")), debug = debug)
