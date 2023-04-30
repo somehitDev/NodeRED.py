@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 import json, noderedpy
+from ._property import (
+    InputProperty, ListProperty, DictProperty,
+    SpinnerProperty, ComboBoxProperty
+)
 
 
 def package_json(node:"noderedpy._nodered.Node") -> str:
@@ -18,17 +22,19 @@ def package_json(node:"noderedpy._nodered.Node") -> str:
 
 def node_html(node:"noderedpy._nodered.Node") -> str:
     properties_html, properties_js, properties_js_prepare, properties_js_cancel, properties_js_save = [], [], [], [], []
+    default_value = None
     for property in node.properties:
-        if property.type in ( "str", "int", "float" ):
+        if isinstance(property, InputProperty):
             properties_html.append(f"""
     <div class="form-row" style="margin-bottom:0px;">
         <label><i class="{property.display_icon}"></i> <span>{property.display_name}</span></label>
     </div>
     <div class="form-row">
-        <input type="text" id="node-input-{property.name}">
+        <input type="text" id="node-input-{property.name}" style="width:100%;">
     </div>
 """)
-        elif property.type == "list":
+            default_value = f'"{property.default}"' if isinstance(property.default, str) else str(property.default)
+        elif isinstance(property, ListProperty):
             properties_html.append(f"""
     <div class="form-row" style="margin-bottom:0px;">
         <label><i class="{property.display_icon}"></i> <span>{property.display_name}</span></label>
@@ -59,7 +65,8 @@ def node_html(node:"noderedpy._nodered.Node") -> str:
                 this.''' + property.name + '''.push(item.find("input.input-list-item").val());
             });
 ''')
-        else:
+            default_value = str(property.default)
+        elif isinstance(property, DictProperty):
             properties_html.append(f"""
     <div class="form-row" style="margin-bottom:0px;">
         <label><i class="{property.display_icon}"></i> <span>{property.display_name}</span></label>
@@ -85,16 +92,56 @@ def node_html(node:"noderedpy._nodered.Node") -> str:
             this.{property.name}Editor.destroy();
             delete this.{property.name}Editor;
 """)
-                                   
-        if property.default_value:
-            default_value = f'"{property.default_value}"' if property.type == "str" else f"`{json.dumps(property.default_value, indent = 4)}`" if property.type == "dict" else str(property.default_value)
-        else:
-            default_value = '""' if property.type == "str" else "[]" if property.type == "list" else '"{}"' if property.type == "dict" else "0"
+            default_value = f"`{json.dumps(property.default, indent = 4)}`"
+        elif isinstance(property, SpinnerProperty):
+            properties_html.append(f"""
+    <div class="form-row" style="margin-bottom:0px;">
+        <label><i class="{property.display_icon}"></i> <span>{property.display_name}</span></label>
+    </div>
+    <div class="form-row">
+        <input type="text" id="node-input-{property.name}" style="width:calc(100% - 22px);">
+    </div>
+""")
+            properties_js_prepare.append('''
+            $("#node-input-''' + property.name + '''").spinner({ min: 0 });
+''')
+            default_value = str(property.default)
+        elif isinstance(property, ComboBoxProperty):
+            options = "\n".join([
+                f"""
+            <option value="{item}">{item}</option>
+"""
+                for item in property.items
+            ])
+            properties_html.append(f"""
+    <div class="form-row" style="margin-bottom:0px;">
+        <label><i class="{property.display_icon}"></i> <span>{property.display_name}</span></label>
+    </div>
+    <div class="form-row">
+        <select id="node-input-{property.name}Select" style="width:100%;">
+{options}
+        </select>
+        <input type="text" id="node-input-{property.name}" style="display:none;">
+    </div>
+""")
+            properties_js_prepare.append('''
+            $("#node-input-''' + property.name + '''Select").val(this.''' + property.name + ''');
+''')
+            properties_js_save.append('''
+            $("#node-input-''' + property.name + '''").val($("#node-input-''' + property.name + ''';").val());
+''')
+            default_value = f'"{property.default}"' if isinstance(property.default, str) else str(property.default)
 
-        properties_js.append("            " + property.name + ': { value: ' + default_value + ' }')
+        if default_value:
+            properties_js.append("            " + property.name + ': { value: ' + default_value + ' }')
 
     return '''
 <script type="text/html" data-template-name="''' + node.name + '''">
+    <style>
+        span.ui-spinner {
+            width: 100%;
+        }
+    </style>
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
         <input type="text" id="node-input-name" style="width:calc(100% - 105px);">

@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 from typing import List
 from types import MethodType
-from ._nodered import Node, NodeProperty
+from ._nodered import Node
+from ._property import Property
 from ._server import Server
 
 
-def register(name:str, category:str = "nodered_py", properties:List[NodeProperty] = []) -> MethodType:
+def register(name:str, category:str = "nodered_py", properties:List[Property] = []) -> MethodType:
     """
     Decorator to register Node function
 
@@ -15,7 +16,7 @@ def register(name:str, category:str = "nodered_py", properties:List[NodeProperty
         name of Node to register
     category: str, default nodered_py
         category of Node
-    properties: List[noderedpy._nodered.NodeProperty]
+    properties: List[noderedpy._property.Property]
         propertis of Node
     """
     def decorator(node_func:MethodType):

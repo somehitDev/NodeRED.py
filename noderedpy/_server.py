@@ -4,7 +4,8 @@ from glob import glob
 from typing import List, Type
 from types import MethodType
 from aiohttp import web
-from ._nodered import RED, Node, NodeProperty
+from ._nodered import RED, Node
+from ._property import Property
 
 
 class Server(web.Application):
@@ -46,7 +47,7 @@ class Server(web.Application):
             self.__start_callback()
 
 
-    def register(self, node_func:MethodType, name:str, category:str = "nodered_py", properties:List[NodeProperty] = []):
+    def register(self, node_func:MethodType, name:str, category:str = "nodered_py", properties:List[Property] = []):
         """
         Function to register Node function
 
@@ -58,7 +59,7 @@ class Server(web.Application):
             name of Node to register
         category: str, default nodered_py
             category of Node
-        properties: List[noderedpy._nodered.NodeProperty]
+        properties: List[noderedpy._property.Property]
             propertis of Node
         """
         node = Node(name if name.startswith("nodered-py") else f"nodered-py-{name}", category, properties, node_func)
@@ -139,7 +140,7 @@ class StandaloneServer:
         self.__server = Server(node_red)
         self.__red = node_red
 
-    def register(self, node_func:MethodType, name:str, category:str = "nodered_py", properties:List[NodeProperty] = []):
+    def register(self, node_func:MethodType, name:str, category:str = "nodered_py", properties:List[Property] = []):
         """
         Function to register Node function
 
@@ -151,7 +152,7 @@ class StandaloneServer:
             name of Node to register
         category: str, default nodered_py
             category of Node
-        properties: List[noderedpy._nodered.NodeProperty]
+        properties: List[noderedpy._property.Property]
             propertis of Node
         """
         self.__server.register(node_func, name, category, properties)
