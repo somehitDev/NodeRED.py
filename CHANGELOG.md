@@ -18,3 +18,11 @@
   - for dict(json), DictProperty
   - for spinner, SpinnerProperty
   - for combobox, ComboBoxProperty
+
+<br/>
+
+## version 0.1.3
+- create template files
+- remove unnecessary code
+- apply "min", "max", "step" of "SpinnerProperty" correctly
+- add "height" to "ListProperty", "DictProperty"

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import os, sys, subprocess, threading, traceback, noderedpy
 from types import MethodType
-from typing import Type, Literal, Any, List
-from ._templates import package_json, node_html, node_js
+from typing import Type, List
+from .templates import package_json, node_html, node_js
 from ._property import Property
 from . import __path__
 
@@ -126,59 +126,6 @@ class RED:
             os.remove(self.__started_file)
 
         self.__stop()
-
-
-# class NodeProperty:
-#     """
-#     Property for Node function
-#     """
-#     def __init__(self, name:str, type:Literal["str", "int", "float", "list", "dict"], default_value:Any = None, required:bool = False, display_icon:str = None):
-#         """
-#         Property information for Node function
-
-#         Parameters
-#         ----------
-#         name: str, required
-#             name of Property
-#         type: Literal["str", "int", "float"], required
-#             type of Property
-#         default_value: Any, default None
-#             default value of Property
-#         required: bool, default False
-#             set Property is required or not
-#         display_icon: str, default None
-#             icon for Node-RED node display
-#         """
-#         if " " in name.strip():
-#             raise NameError("Property name cannot contain space!")
-        
-#         if not type in ("str", "int", "float", "list", "dict"):
-#             raise TypeError("Currently supported types: [ 'str', 'int', 'float', 'list', 'dict' ]")
-        
-#         if default_value is not None and not isinstance(default_value, ( str, int, float, list, dict )):
-#             raise TypeError("Currently supported value types: [ str, int, float, list, dict ]")
-
-#         self.name, self.type, self.default_value, self.required =\
-#             name, type, default_value, required
-        
-#         if display_icon is None:
-#             if type in ( "int", "float" ):
-#                 self.display_icon = "fa fa-sort-numeric-asc"
-#             elif type == "str":
-#                 self.display_icon = "fa fa-font"
-#             elif type == "list":
-#                 self.display_icon = "fa fa-list"
-#             elif type == "dict":
-#                 self.display_icon = "fa fa-code"
-#         else:
-#             self.display_icon = display_icon
-        
-#     @property
-#     def display_name(self) -> str:
-#         return " ".join([
-#             item.capitalize()
-#             for item in self.name.split("_")
-#         ])
 
 class Node:
     def __init__(self, name:str, category:str, properties:List[Property], node_func:MethodType):

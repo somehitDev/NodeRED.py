@@ -1,0 +1,38 @@
+<script type="text/html" data-template-name="{$node_name}">
+    <style>
+        span.ui-spinner {
+            width: 100%;
+        }
+    </style>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+        <input type="text" id="node-input-name" style="width:calc(100% - 105px);">
+    </div>
+    <hr>
+{$properties_html}
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType("{$node_name}", {
+        category: "{$node_category}",
+        color: "#FDD0A2",
+        defaults: {
+            name: { value: "" },
+{$properties_js}
+        },
+        inputs: 1, outputs: 1,
+        icon: "function.png",
+        label: function() {
+            return this.name;
+        },
+        oneditprepare: function() {
+{$properties_js_prepare}
+        },
+        oneditcancel: function() {
+{$properties_js_cancel}
+        },
+        oneditsave: function() {
+{$properties_js_save}
+        }
+    });
+</script>

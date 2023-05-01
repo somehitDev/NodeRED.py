@@ -1,0 +1,12 @@
+{
+    "name": "{$node_name}",
+    "version": "1.0.0",
+    "description": "nodered.py {$node_name} node",
+    "author": "nodered.py",
+    "keywords": [ "node-red" ],
+    "node-red": {
+        "nodes": {
+            "{$node_name}": "lib/{$node_name}.js"
+        }
+    }
+}

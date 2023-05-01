@@ -29,8 +29,8 @@ if __name__ == "__main__":
         
         @register("property-test", properties = [
             InputProperty("input_prop", "input property"),
-            ListProperty("list_prop", [ "list", "property" ]),
-            DictProperty("dict_prop", { "dict": "property" }),
+            ListProperty("list_prop", [ "list", "property" ], 150),
+            DictProperty("dict_prop", { "dict": "property" }, 100),
             SpinnerProperty("spinner_prop", 1),
             ComboBoxProperty("cbox_prop", [ "combobox", "property" ], "property")
         ])

@@ -29,11 +29,11 @@ setup(
     long_description_content_type = "text/markdown",
     # package informations
     packages = [
-        "noderedpy", "noderedpy/node-red-starter"
+        "noderedpy", "noderedpy/templates", "noderedpy/node-red-starter"
     ],
     package_data = {
         "": [
-            "*.js", "*.json"
+            "*.html", "*.js", "*.json"
         ]
     },
     include_package_data = True,

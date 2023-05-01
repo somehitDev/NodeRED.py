@@ -40,14 +40,15 @@ class InputProperty(Property):
             self.display_icon = display_icon
 
 class ListProperty(Property):
-    def __init__(self, name:str, default:list = [], required:bool = False, display_icon:str = None):
+    def __init__(self, name:str, default:list = [], height:int = 250, required:bool = False, display_icon:str = None):
         if not isinstance(default, list):
             raise TypeError("ListProperty can accept type: 'list'")
 
         super().__init__(name, default, required, display_icon if display_icon else "fa fa-list-ul")
+        self.height = height
 
 class DictProperty(Property):
-    def __init__(self, name:str, default:Union[dict, str] = {}, required:bool = False, display_icon:str = None):
+    def __init__(self, name:str, default:Union[dict, str] = {}, height:int = 250, required:bool = False, display_icon:str = None):
         if not isinstance(default, ( dict, str )):
             raise TypeError("DictProperty can accept types: [ 'dict', 'json string' ]")
         
@@ -61,14 +62,15 @@ class DictProperty(Property):
                 raise ValueError("DictProperty value must be 'dict' or 'json string'!")
         
         super().__init__(name, default, required, display_icon if display_icon else "fa fa-code")
+        self.height = height
 
 class SpinnerProperty(Property):
-    def __init__(self, name:str, default:float = 0, step:float = 1, min:float = 0, max:float = 1000, required:bool = False, display_icon:str = None):
+    def __init__(self, name:str, default:float = 0, step:float = None, min:float = None, max:float = None, required:bool = False, display_icon:str = None):
         if not isinstance(default, (int, float)):
             raise TypeError("SpinnerProperty can accept types: [ 'int', 'float' ]")
 
         super().__init__(name, default, required, display_icon if display_icon else "fa fa-random")
-        self.setp, self.min, self.max =\
+        self.step, self.min, self.max =\
             step, min, max
 
 class ComboBoxProperty(Property):
