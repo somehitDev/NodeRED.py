@@ -26,3 +26,9 @@
 - remove unnecessary code
 - apply "min", "max", "step" of "SpinnerProperty" correctly
 - add "height" to "ListProperty", "DictProperty"
+
+<br/>
+
+## version 0.1.4
+- create "CodeProperty"
+- "DictProperty" inherits "CodeProperty" with "json" language setting

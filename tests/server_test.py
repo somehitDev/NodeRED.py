@@ -3,7 +3,7 @@ import os
 from noderedpy import (
     RED, Server,
     InputProperty, ListProperty, DictProperty,
-    SpinnerProperty, ComboBoxProperty
+    SpinnerProperty, ComboBoxProperty, CodeProperty
 )
 from noderedpy.decorator import register
 
@@ -32,7 +32,8 @@ if __name__ == "__main__":
             ListProperty("list_prop", [ "list", "property" ], 150),
             DictProperty("dict_prop", { "dict": "property" }, 100),
             SpinnerProperty("spinner_prop", 1),
-            ComboBoxProperty("cbox_prop", [ "combobox", "property" ], "property")
+            ComboBoxProperty("cbox_prop", [ "combobox", "property" ], "property"),
+            CodeProperty("code_prop", "print(1234)", "python")
         ])
         def property_test(props:dict, msg:dict) -> dict:
             print(props, msg)

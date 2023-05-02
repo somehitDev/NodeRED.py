@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import os, json, noderedpy
 from .._property import (
-    InputProperty, ListProperty, DictProperty,
-    SpinnerProperty, ComboBoxProperty
+    InputProperty, ListProperty,
+    SpinnerProperty, ComboBoxProperty, CodeProperty
 )
 from . import __path__
 
@@ -61,7 +61,7 @@ def node_html(node:"noderedpy._nodered.Node") -> str:
             });
 ''')
             default_value = str(property.default)
-        elif isinstance(property, DictProperty):
+        elif isinstance(property, CodeProperty):
             properties_html.append(f"""
     <div class="form-row" style="margin-bottom:0px;">
         <label><i class="{property.display_icon}"></i> <span>{property.display_name}</span></label>
@@ -70,10 +70,19 @@ def node_html(node:"noderedpy._nodered.Node") -> str:
         <div style="height:{property.height}px;" class="node-text-editor" id="node-input-{property.name}"></div>
     </div>
 """)
-            properties_js_prepare.append('''
+            if property.language:
+                properties_js_prepare.append('''
             this.''' + property.name + '''Editor = RED.editor.createEditor({
                 id: "node-input-''' + property.name + '''",
-                mode: "ace/mode/json",
+                mode: "ace/mode/''' + property.language + '''",
+                value: this.''' + property.name + ''',
+                focus: true
+            });
+''')
+            else:
+                properties_js_prepare.append('''
+            this.''' + property.name + '''Editor = RED.editor.createEditor({
+                id: "node-input-''' + property.name + '''",
                 value: this.''' + property.name + ''',
                 focus: true
             });
@@ -87,7 +96,7 @@ def node_html(node:"noderedpy._nodered.Node") -> str:
             this.{property.name}Editor.destroy();
             delete this.{property.name}Editor;
 """)
-            default_value = f"`{json.dumps(property.default, indent = 4)}`"
+            default_value = f"`{property.default}`"
         elif isinstance(property, SpinnerProperty):
             properties_html.append(f"""
     <div class="form-row" style="margin-bottom:0px;">

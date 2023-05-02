@@ -16,6 +16,15 @@ class Property:
             for item in self.name.split("_")
         ])
 
+class CodeProperty(Property):
+    def __init__(self, name:str, default:str = "", language:str = None, height:int = 250, required:bool = False, display_icon:str = None):
+        if not isinstance(default, str):
+            raise TypeError("CodeProperty can accept types: [ 'dict', 'json string' ]")
+        
+        super().__init__(name, default, required, display_icon if display_icon else "fa fa-code")
+        self.language, self.height =\
+            language, height
+
 class InputProperty(Property):
     def __init__(self, name:str, default:Union[int, float, str] = None, required:bool = False, display_icon:str = None):
         if not isinstance(default, (int, float, str)):
@@ -47,7 +56,7 @@ class ListProperty(Property):
         super().__init__(name, default, required, display_icon if display_icon else "fa fa-list-ul")
         self.height = height
 
-class DictProperty(Property):
+class DictProperty(CodeProperty):
     def __init__(self, name:str, default:Union[dict, str] = {}, height:int = 250, required:bool = False, display_icon:str = None):
         if not isinstance(default, ( dict, str )):
             raise TypeError("DictProperty can accept types: [ 'dict', 'json string' ]")
@@ -60,9 +69,11 @@ class DictProperty(Property):
                 json.loads(default)
             except:
                 raise ValueError("DictProperty value must be 'dict' or 'json string'!")
-        
-        super().__init__(name, default, required, display_icon if display_icon else "fa fa-code")
-        self.height = height
+
+        if isinstance(default, dict):
+            default = json.dumps(default, indent = 4)
+
+        super().__init__(name, default, "json", height, required, display_icon if display_icon else "fa fa-code")
 
 class SpinnerProperty(Property):
     def __init__(self, name:str, default:float = 0, step:float = None, min:float = None, max:float = None, required:bool = False, display_icon:str = None):
