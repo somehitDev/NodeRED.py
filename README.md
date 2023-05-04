@@ -80,3 +80,9 @@ server.start("{title}")
 
 ## Todos
 [x] type support for "list" and "dict"
+
+<br/><br/>
+
+## Roadmap To 2.0
+- remove aiohttp server
+- flexible property ui
