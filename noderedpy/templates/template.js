@@ -1,3 +1,5 @@
+const fs = require("fs"), path = require("path");
+
 let messageCache = {};
     
 module.exports = function(RED) {
@@ -21,7 +23,7 @@ module.exports = function(RED) {
                     header: {}
                 };
                 for (var idx = 0; idx < message.req.rawHeaders.length / 2; idx++) {
-                    reqToSend.header[message.req.rawHeaders[idx * 2]] = message.req.rawHeaders[idx * 2 + 1];
+                    reqToSend.header[message.req.rawHeaders[idx * 2]] = message.req.rawHeaders[idx * 2 + 1].replaceAll('"', "'");
                 }
 
                 message.req = reqToSend;
@@ -42,35 +44,56 @@ module.exports = function(RED) {
 
             node.status({ fill: "green", shape: "dot", text: "Running" });
 
+            const inpFile = path.join("{$cache_dir}", "input.json");
+            const outFile = path.join("{$cache_dir}", "output.json");
+
+            // remove if outFile exists before run
+            if (fs.existsSync(outFile)) {
+                fs.unlinkSync(outFile);
+            }
+
+            // send inputs to python
+            fs.writeFileSync(inpFile, JSON.stringify({
+                name: "{$node_name}",
+                props: configToSend, msg: message
+            }, null, "    "));
+
+            // wait until job done
+            var resp = null;
+            while (true) {
+                if (fs.existsSync(outFile)) {
+                    try {
+                        resp = JSON.parse(fs.readFileSync(outFile));
+                        fs.unlinkSync(outFile);
+                        break;
+                    }
+                    catch {
+                        continue;
+                    }
+                }
+            }
+
+            // get result ans parse
             try {
-                fetch("http://127.0.0.1:{$port}/nodes/{$node_name}", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        props: configToSend, msg: message
-                    })
-                }).then(async (resp) => {
-                    var message = await resp.json();
-                    const state = message.state;
-                    delete message.state;
+                const state = resp.state;
+                delete resp.state;
 
-                    if (state == "success") {
-                        message._msgid = messageCache._msgid;
-                        if (messageCache.req != undefined) {
-                            message.req = messageCache.req;
-                        }
-                        if (messageCache.res != undefined) {
-                            message.res = messageCache.res;
-                        }
+                if (state == "success") {
+                    resp._msgid = messageCache._msgid;
+                    if (messageCache.req != undefined) {
+                        resp.req = messageCache.req;
+                    }
+                    if (messageCache.res != undefined) {
+                        resp.res = messageCache.res;
+                    }
 
-                        node.send(message);
-                        node.status({ fill: "green", shape: "dot", text: "Finished" });
-                    }
-                    else {
-                        node.error(message.message);
-                        node.status({ fill: "red", shape: "dot", text: "Stopped, see debug panel" });
-                    }
-                });
+                    node.send(resp);
+                    node.status({ fill: "green", shape: "dot", text: "Finished" });
+                }
+                else {
+                    node.error(resp.message);
+                    node.status({ fill: "red", shape: "dot", text: "Stopped, see debug panel" });
+                }
             }
             catch (err) {
                 node.error(err.message);

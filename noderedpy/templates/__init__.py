@@ -168,7 +168,7 @@ def node_html(node:"noderedpy._nodered.Node") -> str:
         "{$properties_js_save}", "\n".join(properties_js_save)
     )
 
-def node_js(node:"noderedpy._nodered.Node", port:int) -> str:
+def node_js(node:"noderedpy._nodered.Node", cache_dir:str) -> str:
     with open(os.path.join(__path__[0], "template.js"), "r", encoding = "utf-8") as tr:
         tt = tr.read()
 
@@ -177,5 +177,5 @@ def node_js(node:"noderedpy._nodered.Node", port:int) -> str:
     ).replace(
         "{$node_properties}", str([ property.name for property in node.properties])
     ).replace(
-        "{$port}", str(port)
+        "{$cache_dir}", cache_dir
     )

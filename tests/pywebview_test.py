@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
-import os
+"""
+requirements: pywebview>=3.7.2
+"""
+
+import os, webview
 from noderedpy import (
-    RED, StandaloneServer,
+    RED,
     InputProperty, ListProperty, DictProperty
 )
 from noderedpy.decorator import register
@@ -26,9 +30,14 @@ if __name__ == "__main__":
 
             return msg
 
-    StandaloneServer(
-        RED(
-            os.path.join(__dirname, ".node-red-standalone"),
-            "/node-red", 1880
-        )
-    ).start("NodeRED.py standalone", debug = True)
+    red = RED(
+        os.path.join(__dirname, ".node-red-pywebview"),
+        os.path.join(__dirname, "node_red_dir"),
+        "/node-red", 1880
+    )
+
+    webview.initialize()
+    win = webview.create_window("Node-RED.py pywebview")
+    win.events.closing += red.stop
+
+    webview.start(lambda: red.start(callback = lambda: win.load_url(f"http://127.0.0.1:{red.port}{red.admin_root}")), debug = True)

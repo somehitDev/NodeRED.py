@@ -32,8 +32,11 @@ const exapp = express();
 const RED_server = http.createServer(exapp);
 
 // set configs
+var editorTheme = JSON.parse(fs.readFileSync(path.join(__dirname, "editorTheme.json")))
+editorTheme["projects"] = { enabled: false };
+
 let opts = {
-    editorTheme: { projects: { enabled: false } },
+    editorTheme: editorTheme,
     httpAdminRoot: args["admin_root"].startsWith("/") ? args["admin_root"] : `/${args["admin_root"]}`,
     httpNodeRoot: "/",
     flowFile: "noderedpy.json",

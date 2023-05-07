@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 from noderedpy import (
-    RED, Server,
+    RED,
     InputProperty, ListProperty, DictProperty,
     SpinnerProperty, ComboBoxProperty, CodeProperty
 )
@@ -44,14 +44,22 @@ if __name__ == "__main__":
 
             return msg
 
-    server = Server(
-        RED(
-            os.path.join(__dirname, ".node-red"),
-            "/node-red", 1880
-        )
+    # server = Server(
+    #     RED(
+    #         os.path.join(__dirname, ".node-red"),
+    #         os.path.join(__dirname, "node_red_dir"),
+    #         "/node-red", 1880
+    #     )
+    # )
+    red = RED(
+        os.path.join(__dirname, ".node-red"),
+        os.path.join(__dirname, "node_red_dir"),
+        "/node-red", 1880
     )
 
     app = TotalApp()
-    server.register(app.test2, "test2")
+    # server.register(app.test2, "test2")
+    red.register(app.test2, "test2")
 
-    server.start(1881, show_browser = False)
+    # server.start(1881, show_browser = False)
+    red.start(True)

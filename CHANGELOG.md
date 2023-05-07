@@ -32,3 +32,11 @@
 ## version 0.1.4
 - create "CodeProperty"
 - "DictProperty" inherits "CodeProperty" with "json" language setting
+
+<br/>
+
+## version 0.2.0
+- remove server.
+  - start Node-RED object directly.
+- remove standalone server.
+  - pywebview integration is in <a href="">tests</a>.
