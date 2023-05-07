@@ -36,6 +36,7 @@
 <br/>
 
 ## version 0.2.0
+- add <a href="https://github.com/oyajiDev/NodeRED.py/blob/deea7530d6fcda9cdf6d76e9b5f827064de5722c/noderedpy/_nodered.py#L60">editorTheme</a>
 - remove server.
   - start Node-RED object directly.
 - remove standalone server.
