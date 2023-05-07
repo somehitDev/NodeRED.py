@@ -39,18 +39,11 @@ if __name__ == "__main__":
             print(props, msg)
             return msg
         
-        def test2(self, pros:dict, msg:dict) -> dict:
+        def test2(self, _, msg:dict) -> dict:
             print(self.count, msg["payload"])
 
             return msg
 
-    # server = Server(
-    #     RED(
-    #         os.path.join(__dirname, ".node-red"),
-    #         os.path.join(__dirname, "node_red_dir"),
-    #         "/node-red", 1880
-    #     )
-    # )
     red = RED(
         os.path.join(__dirname, ".node-red"),
         os.path.join(__dirname, "node_red_dir"),
@@ -58,8 +51,6 @@ if __name__ == "__main__":
     )
 
     app = TotalApp()
-    # server.register(app.test2, "test2")
     red.register(app.test2, "test2")
 
-    # server.start(1881, show_browser = False)
     red.start(True)
