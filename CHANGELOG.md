@@ -41,3 +41,11 @@
   - start Node-RED object directly.
 - remove standalone server.
   - pywebview integration is in <a href="https://github.com/oyajiDev/NodeRED.py/blob/master/tests/pywebview_test.py">tests</a>.
+
+<br/>
+
+## version 0.2.1
+- remove unnecessary code
+- add "version", "description", "author", "keywords", "icon" to Node attributes.
+- remove "nodered-py-" prefix from Node name.
+  - "nodered-py-" only attach to directory of Node.

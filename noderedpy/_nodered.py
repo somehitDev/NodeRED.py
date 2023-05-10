@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os, sys, subprocess, shutil, json, traceback
 from types import MethodType
-from typing import Type, List
+from typing import List
 from glob import glob
 from .templates import package_json, node_html, node_js
 from ._property import Property
@@ -68,6 +68,10 @@ class RED:
             "title": "Node-RED.py",
             "image": None
         })
+        menu_theme = editor_theme.pop("menu", {})
+        menu_theme.update({
+            "menu-item-palette": False
+        })
         project_feature = editor_theme.pop("projects", {})
         project_feature.update({
             "enabled": project_feature.pop("enabled", False)
@@ -76,13 +80,14 @@ class RED:
         editor_theme.update({
             "page": page_theme,
             "header": header_theme,
+            "menu": menu_theme,
             "userMenu": editor_theme.pop("userMenu", False),
             "projects": project_feature
         })
 
         return editor_theme
     
-    def register(self, node_func:MethodType, name:str, category:str = "nodered_py", properties:List[Property] = []):
+    def register(self, node_func:MethodType, name:str, category:str = "nodered_py", version:str = "1.0.0", description:str = "", author:str = "nodered.py", keywords:List[str] = [], icon:str = "function.png", properties:List[Property] = []):
         """
         Function to register Node function
 
@@ -94,11 +99,26 @@ class RED:
             name of Node to register
         category: str, default nodered_py
             category of Node
+        version: str, default 1.0.0
+            version of Node
+        description: str, default ""
+            description of Node
+        author: str, default nodered.py
+            author of Node
+        keywords: List[str], default []
+            extra keywords of Node
+        icon: str, default function.png
+            icon of Node(html)
         properties: List[noderedpy._property.Property]
             propertis of Node
         """
-        node = Node(name if name.startswith("nodered-py") else f"nodered-py-{name}", category, properties, node_func)
-        RED.registered_nodes.append(node)
+        RED.registered_nodes.append(
+            Node(
+                name, category,
+                version, description, author, keywords,
+                icon, properties, node_func
+            )
+        )
 
     # check input and run node
     def __check_input_from_node(self):
@@ -152,7 +172,7 @@ class RED:
 
         # save editor_theme
         with open(os.path.join(self.node_red_dir, "editorTheme.json"), "w", encoding = "utf-8") as tjw:
-            json.dump(self.editor_theme, tjw)
+            json.dump(self.editor_theme, tjw, indent = 4)
 
         # remove existing nodes
         for node_dir in glob(os.path.join(self.user_dir, "node_modules", "nodered-py-*")):
@@ -236,20 +256,29 @@ class RED:
                 break
 
 class Node:
-    def __init__(self, name:str, category:str, properties:List[Property], node_func:MethodType):
+    def __init__(self, name:str, category:str, version:str, description:str, author:str, keywords:List[str], icon:str, properties:List[Property], node_func:MethodType):
+        # name of node cannot contain spaces
         if " " in name.strip():
             raise NameError("Node name cannot contain spaces!")
         
+        # category of node cannot contain - or ,
         if "-" in category.strip() or "," in category.strip():
             raise NameError("Category cannot contain '-' or ','!")
+        
+        # remove default keyword in extra keywords
+        self.keywords = [
+            keyword
+            for keyword in keywords
+            if not keyword in ( "node-red", )
+        ]
 
-        self.name, self.category, self.properties =\
-            name, category, properties
+        self.name, self.category, self.version, self.description, self.author, self.icon, self.properties =\
+            name, category, version, description, author, icon, properties
         
         self.__node_func = node_func
 
     def create(self, node_red_user_dir:str, node_red_user_cache_dir:str):
-        node_dir = os.path.join(node_red_user_dir, "node_modules", self.name)
+        node_dir = os.path.join(node_red_user_dir, "node_modules", self.name if self.name.startswith("nodered-py-") else f"nodered-py-{self.name}")
         os.makedirs(os.path.join(node_dir, "lib"))
 
         with open(os.path.join(node_dir, "package.json"), "w", encoding = "utf-8") as pjw:

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import os, json, noderedpy
+import os, noderedpy
 from .._property import (
     InputProperty, ListProperty,
     SpinnerProperty, ComboBoxProperty, CodeProperty
@@ -11,9 +11,26 @@ def package_json(node:"noderedpy._nodered.Node") -> str:
     with open(os.path.join(__path__[0], "template.json"), "r", encoding = "utf-8") as tr:
         tt = tr.read()
 
-    return tt.replace(
+    tt = tt.replace(
         "{$node_name}", node.name
+    ).replace(
+        "{$node_version}", node.version
+    ).replace(
+        "{$node_description}", node.description
+    ).replace(
+        "{$node_author}", node.author
     )
+    
+    if node.keywords == []:
+        tt = tt.replace(
+            "{$node_keywords}", ""
+        )
+    else:
+        tt = tt.replace(
+            "{$node_keywords}", ", " + ", ".join([ f'"{keyword}"' for keyword in node.keywords ])
+        )
+
+    return tt
 
 def node_html(node:"noderedpy._nodered.Node") -> str:
     properties_html, properties_js, properties_js_prepare, properties_js_cancel, properties_js_save = [], [], [], [], []
@@ -156,6 +173,8 @@ def node_html(node:"noderedpy._nodered.Node") -> str:
         "{$node_name}", node.name
     ).replace(
         "{$node_category}", node.category
+    ).replace(
+        "{$node_icon}", f'"{node.icon}"' if node.icon else "null"
     ).replace(
         "{$properties_html}", "".join(properties_html)
     ).replace(

@@ -27,14 +27,18 @@ if __name__ == "__main__":
 
             return msg
         
-        @register("property-test", properties = [
-            InputProperty("input_prop", "input property"),
-            ListProperty("list_prop", [ "list", "property" ], 150),
-            DictProperty("dict_prop", { "dict": "property" }, 100),
-            SpinnerProperty("spinner_prop", 1),
-            ComboBoxProperty("cbox_prop", [ "combobox", "property" ], "property"),
-            CodeProperty("code_prop", "print(1234)", "python")
-        ])
+        @register(
+            "property-test", author = "oyajiDev", version = "0.1.0", description = "test for multi properties",
+            icon = None,
+            properties = [
+                InputProperty("input_prop", "input property"),
+                ListProperty("list_prop", [ "list", "property" ], 150),
+                DictProperty("dict_prop", { "dict": "property" }, 100),
+                SpinnerProperty("spinner_prop", 1),
+                ComboBoxProperty("cbox_prop", [ "combobox", "property" ], "property"),
+                CodeProperty("code_prop", "print(1234)", "python")
+            ]
+        )
         def property_test(props:dict, msg:dict) -> dict:
             print(props, msg)
             return msg

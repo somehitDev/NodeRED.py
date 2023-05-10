@@ -1,9 +1,9 @@
 {
     "name": "{$node_name}",
-    "version": "1.0.0",
-    "description": "nodered.py {$node_name} node",
-    "author": "nodered.py",
-    "keywords": [ "node-red" ],
+    "version": "{$node_version}",
+    "description": "{$node_description}",
+    "author": "{$node_author}",
+    "keywords": [ "node-red"{$node_keywords} ],
     "node-red": {
         "nodes": {
             "{$node_name}": "lib/{$node_name}.js"
