@@ -54,4 +54,4 @@
 
 ## version 0.2.2
 - change node-red command arguments to config.json.
-- add <a href="https://github.com/oyajiDev/NodeRED.py/blob/master/tests/pywebview_test.py">"auths"</a> options.
+- add <a href="https://github.com/oyajiDev/NodeRED.py/blob/f5aff33113d2038f7a49cd61b233dbef1ea659dd/tests/server_test.py#L55">"auths"</a> options.
