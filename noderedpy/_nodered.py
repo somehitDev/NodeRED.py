@@ -14,7 +14,7 @@ class RED:
     """
     registered_nodes:List["Node"] = []
 
-    def __init__(self, user_dir:str, node_red_dir:str = None, admin_root:str = "/node-red-py", port:int = 1880, show_default_category:bool = True, editor_theme:dict = {}):
+    def __init__(self, user_dir:str, node_red_dir:str = None, admin_root:str = "/node-red-py", port:int = 1880, show_default_category:bool = True, editor_theme:dict = {}, auths:List[dict] = []):
         """
         Set configs of Node-RED and setup
 
@@ -32,9 +32,13 @@ class RED:
             show default categories of Node-RED or not
         editor_theme: dict, default {}
             editorTheme of Node-RED server (for detail information, see https://github.com/node-red/node-red/wiki/Design:-Editor-Themes)
+        auths: List[dict], default []
+            auth list for Node-RED
         """
         self.user_dir, self.admin_root, self.port, self.show_default_category, self.editor_theme =\
             user_dir, admin_root, port, show_default_category, self.__default_editor_theme(editor_theme)
+        
+        self.node_auths = self.__default_node_auth(auths)
         
         # set node_red_dir
         if node_red_dir is None:
@@ -81,11 +85,24 @@ class RED:
             "page": page_theme,
             "header": header_theme,
             "menu": menu_theme,
-            "userMenu": editor_theme.pop("userMenu", False),
+            "userMenu": editor_theme.pop("userMenu", True),
             "projects": project_feature
         })
 
         return editor_theme
+    
+    # fill empty auth in auths
+    def __default_node_auth(self, node_auths:List[dict]) -> List[dict]:
+        new_node_auths = []
+        for node_auth in node_auths:
+            if ("username" in node_auth.keys() and not node_auth["username"] in ( None, "" )) and ("password" in node_auth.keys() and not node_auth["password"] in ( None, "" )):
+                new_node_auths.append({
+                    "username": node_auth["username"],
+                    "password": node_auth["password"],
+                    "permissions": node_auth.pop("permissions", "*")
+                })
+
+        return new_node_auths
     
     def register(self, node_func:MethodType, name:str, category:str = "nodered_py", version:str = "1.0.0", description:str = "", author:str = "nodered.py", keywords:List[str] = [], icon:str = "function.png", properties:List[Property] = []):
         """
@@ -170,9 +187,21 @@ class RED:
 
         os.mkdir(self.__cache_dir)
 
-        # save editor_theme
-        with open(os.path.join(self.node_red_dir, "editorTheme.json"), "w", encoding = "utf-8") as tjw:
-            json.dump(self.editor_theme, tjw, indent = 4)
+        # save configs
+        with open(os.path.join(self.node_red_dir, "config.json"), "w", encoding = "utf-8") as cfw:
+            json.dump({
+                "userDir": self.user_dir,
+                "adminRoot": self.admin_root,
+                "port": self.port,
+                "showDefaultCategory": self.show_default_category,
+                "userCategory": list(set([ node.category for node in RED.registered_nodes ])),
+                "editorTheme": self.editor_theme,
+                "adminAuth": self.node_auths
+            }, cfw, indent = 4)
+
+        # # save editor_theme
+        # with open(os.path.join(self.node_red_dir, "editorTheme.json"), "w", encoding = "utf-8") as tjw:
+        #     json.dump(self.editor_theme, tjw, indent = 4)
 
         # remove existing nodes
         for node_dir in glob(os.path.join(self.user_dir, "node_modules", "nodered-py-*")):
@@ -185,12 +214,7 @@ class RED:
         # run Node-RED server
         subprocess.Popen([
             "node",
-            "index.js",
-            f"--user-dir={self.user_dir}",
-            f"--admin-root={self.admin_root}",
-            f"--port={self.port}",
-            f"--show-default-category={'true' if self.show_default_category else 'false'}"
-            f"--user-category={','.join(list(set([ node.category for node in RED.registered_nodes ])))}"
+            "index.js"
         ], shell = False, stdout = sys.stdout if debug else subprocess.DEVNULL, cwd = self.node_red_dir)
 
         while True:
@@ -215,14 +239,21 @@ class RED:
         if os.path.exists(self.__started_file):
             os.remove(self.__started_file)
 
+        # save configs
+        with open(os.path.join(self.node_red_dir, "config.json"), "w", encoding = "utf-8") as cfw:
+            json.dump({
+                "userDir": self.user_dir,
+                "adminRoot": self.admin_root,
+                "port": self.port,
+                "showDefaultCategory": self.show_default_category,
+                "userCategory": list(set([ node.category for node in RED.registered_nodes ])),
+                "editorTheme": self.editor_theme,
+                "adminAuth": []
+            }, cfw, indent = 4)
+
         subprocess.Popen([
             "node",
-            "index.js",
-            f"--user-dir={self.user_dir}",
-            f"--admin-root={self.admin_root}",
-            f"--port={self.port}",
-            f"--show-default-category={'true' if self.show_default_category else 'false'}"
-            f"--user-category={','.join(list(set([ node.category for node in RED.registered_nodes ])))}"
+            "index.js"
         ], shell = False, stdout = subprocess.DEVNULL, cwd = self.node_red_dir)
 
         while True:

@@ -20,7 +20,7 @@ setup(
     author_email = __email__,
     url = "https://github.com/oyajiDev/NodeRED.py",
     version = __version__,
-    python_requires = ">=3.9",
+    python_requires = ">=3.7",
     install_requires = requires,
     setup_requires = requires,
     license = "MIT license",

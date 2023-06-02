@@ -51,7 +51,10 @@ if __name__ == "__main__":
     red = RED(
         os.path.join(__dirname, ".node-red"),
         os.path.join(__dirname, "node_red_dir"),
-        "/node-red", 1880
+        "/node-red", 1880,
+        auths = [
+            { "username": "node-red-py", "password": "p@ssword" }
+        ]
     )
 
     app = TotalApp()

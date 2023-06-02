@@ -49,3 +49,9 @@
 - add "version", "description", "author", "keywords", "icon" to Node attributes.
 - remove "nodered-py-" prefix from Node name.
   - "nodered-py-" only attach to directory of Node.
+
+<br>
+
+## version 0.2.2
+- change node-red command arguments to config.json.
+- add <a href="https://github.com/oyajiDev/NodeRED.py/blob/master/tests/pywebview_test.py">"auths"</a> options.
