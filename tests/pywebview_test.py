@@ -40,4 +40,4 @@ if __name__ == "__main__":
     win = webview.create_window("Node-RED.py pywebview")
     win.events.closing += red.stop
 
-    webview.start(lambda: red.start(callback = lambda: win.load_url(f"http://127.0.0.1:{red.port}{red.admin_root}")), debug = True)
+    webview.start(lambda: red.start(callback = lambda: win.load_url(f"http://127.0.0.1:{red.port}{red.admin_root}"), start_browser = False), debug = True)

@@ -55,3 +55,13 @@
 ## version 0.2.2
 - change node-red command arguments to config.json.
 - add <a href="https://github.com/oyajiDev/NodeRED.py/blob/f5aff33113d2038f7a49cd61b233dbef1ea659dd/tests/server_test.py#L55">"auths"</a> options.
+
+<br>
+
+## version 0.2.3
+- change the order of arguments in function "start".
+  - add "start_browser" argument.
+- remove "config.json" file after read config in Node-RED.
+- remove unnecessary code and comments.
+- update examples.
+- fix bug on auth configs.

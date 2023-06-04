@@ -60,4 +60,4 @@ if __name__ == "__main__":
     app = TotalApp()
     red.register(app.test2, "test2")
 
-    red.start(True)
+    red.start(debug = True, start_browser = False)

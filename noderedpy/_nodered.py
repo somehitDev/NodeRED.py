@@ -24,7 +24,7 @@ class RED:
             userDir of Node-RED settings
         node_red_dir: str, default None
             directory for Node-RED starter
-        admin_root: str, default "node-red-py"
+        admin_root: str, default "/node-red-py"
             httpAdminRoot of Node-RED settings
         port: int, default 1880
             port of Node-RED server
@@ -38,6 +38,9 @@ class RED:
         self.user_dir, self.admin_root, self.port, self.show_default_category, self.editor_theme =\
             user_dir, admin_root, port, show_default_category, self.__default_editor_theme(editor_theme)
         
+        if not self.admin_root.startswith("/"):
+            self.admin_root = f"/{self.admin_root}"
+
         self.node_auths = self.__default_node_auth(auths)
         
         # set node_red_dir
@@ -160,7 +163,7 @@ class RED:
                 with open(output_file, "w", encoding = "utf-8") as ofw:
                     json.dump(node.run(input_data["props"], input_data["msg"]), ofw, indent = 4)
 
-    def start(self, debug:bool = True, callback:MethodType = None):
+    def start(self, callback:MethodType = None, debug:bool = True, start_browser:bool = True):
         """
         Start Node-RED server
 
@@ -219,6 +222,10 @@ class RED:
 
         while True:
             if os.path.exists(self.__started_file):
+                if start_browser:
+                    import webbrowser
+                    webbrowser.open_new(f"http://127.0.0.1:{self.port}{self.admin_root}")
+
                 if callback:
                     callback()
 
