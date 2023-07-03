@@ -52,6 +52,11 @@ if __name__ == "__main__":
         os.path.join(__dirname, ".node-red"),
         os.path.join(__dirname, "node_red_dir"),
         "/node-red", 1880,
+        editor_theme = {
+            "palette": {
+                "editable": False
+            }
+        },
         auths = [
             { "username": "node-red-py", "password": "p@ssword" }
         ]

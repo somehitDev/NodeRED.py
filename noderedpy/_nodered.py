@@ -51,6 +51,8 @@ class RED:
             if os.path.exists(node_red_dir):
                 if not { "index.js", "package.json" }.issubset(set(os.listdir(node_red_dir))):
                     raise RuntimeError("Target `node_red_dir` is not Node-RED dir format!")
+
+                shutil.copyfile(os.path.join(__path__[0], "node-red-starter", "index.js"), os.path.join(node_red_dir, "index.js"))
             else:
                 os.mkdir(node_red_dir)
                 shutil.copyfile(os.path.join(__path__[0], "node-red-starter", "index.js"), os.path.join(node_red_dir, "index.js"))
@@ -79,16 +81,22 @@ class RED:
         menu_theme.update({
             "menu-item-palette": False
         })
+        palette_theme = editor_theme.pop("palette", {})
+        palette_theme.update({
+            "editable": palette_theme.pop("editable", True)
+        })
         project_feature = editor_theme.pop("projects", {})
         project_feature.update({
-            "enabled": project_feature.pop("enabled", False)
+            "enabled": project_feature.pop("enabled", True)
         })
 
         editor_theme.update({
             "page": page_theme,
             "header": header_theme,
             "menu": menu_theme,
+            "tours": editor_theme.pop("tours", False),
             "userMenu": editor_theme.pop("userMenu", True),
+            "palette": palette_theme,
             "projects": project_feature
         })
 
@@ -201,10 +209,6 @@ class RED:
                 "editorTheme": self.editor_theme,
                 "adminAuth": self.node_auths
             }, cfw, indent = 4)
-
-        # # save editor_theme
-        # with open(os.path.join(self.node_red_dir, "editorTheme.json"), "w", encoding = "utf-8") as tjw:
-        #     json.dump(self.editor_theme, tjw, indent = 4)
 
         # remove existing nodes
         for node_dir in glob(os.path.join(self.user_dir, "node_modules", "nodered-py-*")):

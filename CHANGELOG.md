@@ -65,3 +65,10 @@
 - remove unnecessary code and comments.
 - update examples.
 - fix bug on auth configs.
+
+<br>
+
+## version 0.2.4
+- remove unnecessary code and comments.
+- "palette" of "editor_theme" works properly.
+- replace "index.js" file of launch directory.
