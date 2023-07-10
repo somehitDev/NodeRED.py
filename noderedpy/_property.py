@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import json
+import json, pandas as pd
 from typing import Any, Union, List
 
 
@@ -73,7 +73,7 @@ class DictProperty(CodeProperty):
         if isinstance(default, dict):
             default = json.dumps(default, indent = 4)
 
-        super().__init__(name, default, "json", height, required, display_icon if display_icon else "fa fa-code")
+        super().__init__(name, default, "json", height, required, display_icon if display_icon else "fa fa-file-code-o")
 
 class SpinnerProperty(Property):
     def __init__(self, name:str, default:float = 0, step:float = None, min:float = None, max:float = None, required:bool = False, display_icon:str = None):
@@ -84,6 +84,10 @@ class SpinnerProperty(Property):
         self.step, self.min, self.max =\
             step, min, max
 
+class CheckBoxProperty(Property):
+    def __init__(self, name:str, default:bool = False, required:bool = False, display_icon:str = None):
+        super().__init__(name, default, required, display_icon if display_icon else "fa fa-check")
+
 class ComboBoxProperty(Property):
     def __init__(self, name:str, items:List[Any], default:str = None, required:bool = False, display_icon:str = None):
         if not isinstance(items, list):
@@ -91,3 +95,11 @@ class ComboBoxProperty(Property):
         
         super().__init__(name, default, required, display_icon if display_icon else "fa fa-filter")
         self.items = items
+
+# class FileProperty(Property):
+#     def __init__(self, name:str, default:str = None, required:bool = False, display_icon:str = None):
+#         super().__init__(name, default if default else "", required, display_icon if display_icon else "fa fa-file-text-o")
+
+# class TableProperty(Property):
+#     def __init__(self, name:str, default:pd.DataFrame = None, required:bool = False, display_icon:str = None):
+#         super().__init__(name, default if default else pd.DataFrame(), required, display_icon if display_icon else "fa fa-table")

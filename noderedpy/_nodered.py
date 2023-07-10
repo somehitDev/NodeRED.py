@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os, sys, subprocess, shutil, json, traceback
 from types import MethodType
-from typing import List
+from typing import List, Literal
 from glob import glob
 from .templates import package_json, node_html, node_js
 from ._property import Property
@@ -297,6 +297,38 @@ class RED:
             if killed:
                 break
 
+class NodeCommunicator:
+    def __init__(self, message_file:str, node_name:str):
+        self.__message_file, self.__node_name = message_file, node_name
+
+    def log(self, *args):
+        with open(self.__message_file, "w", encoding = "utf-8") as mfw:
+            json.dump({
+                "name": self.__node_name,
+                "log": args
+            }, mfw, indent = 4)
+
+    def warn(self, *args):
+        with open(self.__message_file, "w", encoding = "utf-8") as mfw:
+            json.dump({
+                "name": self.__node_name,
+                "warn": args
+            }, mfw, indent = 4)
+
+    def error(self, *args):
+        with open(self.__message_file, "w", encoding = "utf-8") as mfw:
+            json.dump({
+                "name": self.__node_name,
+                "error": args
+            }, mfw, indent = 4)
+
+    def status(self, fill:Literal["red", "green", "yellow", "blue", "grey"], shape:Literal["ring", "dot"], text:str):
+        with open(self.__message_file, "w", encoding = "utf-8") as mfw:
+            json.dump({
+                "name": self.__node_name,
+                "status": { "fill": fill, "shape": shape, "text": text }
+            }, mfw, indent = 4)
+
 class Node:
     def __init__(self, name:str, category:str, version:str, description:str, author:str, keywords:List[str], icon:str, properties:List[Property], node_func:MethodType):
         # name of node cannot contain spaces
@@ -320,6 +352,7 @@ class Node:
         self.__node_func = node_func
 
     def create(self, node_red_user_dir:str, node_red_user_cache_dir:str):
+        self.__communicator = NodeCommunicator(os.path.join(node_red_user_cache_dir, "message.json"), self.name)
         node_dir = os.path.join(node_red_user_dir, "node_modules", self.name if self.name.startswith("nodered-py-") else f"nodered-py-{self.name}")
         os.makedirs(os.path.join(node_dir, "lib"))
 
@@ -335,10 +368,10 @@ class Node:
     def run(self, props:dict, msg:dict) -> dict:
         print(f"\n{self.name} started\n===================================")
         try:
-            resp = self.__node_func(props, msg)
+            resp = self.__node_func(self.__communicator, props, msg)
             print("============================= ended\n")
 
-            resp.update({ "state": "success" })
+            resp.update({ "state": "success", "name": self.name })
 
             return resp
         except:

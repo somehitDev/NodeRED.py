@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
-from ._nodered import RED
+from ._nodered import RED, NodeCommunicator as Node
 from ._property import (
-    InputProperty, ListProperty, DictProperty,
-    SpinnerProperty, ComboBoxProperty, CodeProperty
+    InputProperty, ListProperty, DictProperty, CodeProperty,
+    SpinnerProperty, CheckBoxProperty, ComboBoxProperty
 )
 
 
-__version__ = "0.2.4"
+__version__ = "0.2.5"
 __author__ = "oyajiDev"
 __email__ = "this.dev.somehit@gmail.com"
 
 __all__ = [
-    "RED",
-    "InputProperty", "ListProperty", "DictProperty",
-    "SpinnerProperty", "ComboBoxProperty", "CodeProperty",
+    "RED", "Node",
+    "InputProperty", "ListProperty", "DictProperty", "CodeProperty",
+    "SpinnerProperty", "CheckBoxProperty", "ComboBoxProperty"
 ]

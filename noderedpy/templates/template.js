@@ -46,6 +46,7 @@ module.exports = function(RED) {
 
             const inpFile = path.join("{$cache_dir}", "input.json");
             const outFile = path.join("{$cache_dir}", "output.json");
+            const messageFile = path.join("{$cache_dir}", "message.json");
 
             // remove if outFile exists before run
             if (fs.existsSync(outFile)) {
@@ -61,11 +62,38 @@ module.exports = function(RED) {
             // wait until job done
             var resp = null;
             while (true) {
+                if (fs.existsSync(messageFile)) {
+                    try {
+                        var resp_msg = JSON.parse(fs.readFileSync(messageFile));
+                        if (resp_msg.name == "{$node_name}") {
+                            fs.unlinkSync(messageFile);
+
+                            if (resp_msg.status != undefined) {
+                                node.status(resp_msg.status);
+                            }
+                            if (resp_msg.log != undefined) {
+                                node.log(resp_msg.log.join(" "));
+                            }
+                            if (resp_msg.warn != undefined) {
+                                node.warn(resp_msg.warn.join(" "));
+                            }
+                            if (resp_msg.error != undefined) {
+                                node.error(resp_msg.error.join(" "));
+                            }
+                        }
+                    }
+                    catch {
+                        continue;
+                    }
+                }
+
                 if (fs.existsSync(outFile)) {
                     try {
                         resp = JSON.parse(fs.readFileSync(outFile));
-                        fs.unlinkSync(outFile);
-                        break;
+                        if (resp.name == "{$node_name}") {
+                            fs.unlinkSync(outFile);
+                            break;
+                        }
                     }
                     catch {
                         continue;

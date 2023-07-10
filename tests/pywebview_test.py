@@ -5,7 +5,7 @@ requirements: pywebview>=3.7.2
 
 import os, webview
 from noderedpy import (
-    RED,
+    RED, Node,
     InputProperty, ListProperty, DictProperty
 )
 from noderedpy.decorator import register
@@ -20,7 +20,7 @@ if __name__ == "__main__":
             ListProperty("list_prop", [ 1, 2, 3, 4 ]),
             DictProperty("dict_prop", { "a": 1 })
         ])
-        def test(props:dict, msg:dict) -> dict:
+        def test(node:Node, props:dict, msg:dict) -> dict:
             TotalApp.count += 1
 
             print(props)

@@ -72,3 +72,11 @@
 - remove unnecessary code and comments.
 - "palette" of "editor_theme" works properly.
 - replace "index.js" file of launch directory.
+
+<br>
+
+# version 0.2.5
+- add "CheckBox" property.
+- add "node" arg into function call.
+  - "status", "log" function available.
+- add "name" to verify cache file is targeted on node itself.

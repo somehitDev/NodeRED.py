@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-import os
+import os, time
 from noderedpy import (
-    RED,
-    InputProperty, ListProperty, DictProperty,
-    SpinnerProperty, ComboBoxProperty, CodeProperty
+    RED, Node,
+    InputProperty, ListProperty, DictProperty, CodeProperty,
+    SpinnerProperty, CheckBoxProperty, ComboBoxProperty
 )
 from noderedpy.decorator import register
 
@@ -17,7 +17,7 @@ if __name__ == "__main__":
             ListProperty("list_prop", [ 1, 2, 3, 4 ]),
             DictProperty("dict_prop", { "a": 1 })
         ])
-        def test(props:dict, msg:dict) -> dict:
+        def test(node:Node, props:dict, msg:dict) -> dict:
             TotalApp.count += 1
 
             print(props)
@@ -35,15 +35,21 @@ if __name__ == "__main__":
                 ListProperty("list_prop", [ "list", "property" ], 150),
                 DictProperty("dict_prop", { "dict": "property" }, 100),
                 SpinnerProperty("spinner_prop", 1),
+                CheckBoxProperty("chkbox_prop", True),
                 ComboBoxProperty("cbox_prop", [ "combobox", "property" ], "property"),
                 CodeProperty("code_prop", "print(1234)", "python")
             ]
         )
-        def property_test(props:dict, msg:dict) -> dict:
+        def property_test(node:Node, props:dict, msg:dict) -> dict:
+            node.status("grey", "ring", "status test")
+            node.log("123", "456", "789")
+            node.warn("123", "456", "789")
+            node.error("123", "456", "789")
+
             print(props, msg)
             return msg
         
-        def test2(self, _, msg:dict) -> dict:
+        def test2(self, node:Node, props:dict, msg:dict) -> dict:
             print(self.count, msg["payload"])
 
             return msg
@@ -55,6 +61,9 @@ if __name__ == "__main__":
         editor_theme = {
             "palette": {
                 "editable": False
+            },
+            "projects": {
+                "enabled": False
             }
         },
         auths = [

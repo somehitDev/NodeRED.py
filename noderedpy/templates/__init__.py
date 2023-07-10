@@ -2,7 +2,8 @@
 import os, noderedpy
 from .._property import (
     InputProperty, ListProperty,
-    SpinnerProperty, ComboBoxProperty, CodeProperty
+    SpinnerProperty, CheckBoxProperty, ComboBoxProperty, CodeProperty,
+    # FileProperty, TableProperty
 )
 from . import __path__
 
@@ -39,7 +40,7 @@ def node_html(node:"noderedpy._nodered.Node") -> str:
         if isinstance(property, InputProperty):
             properties_html.append(f"""
     <div class="form-row" style="margin-bottom:0px;">
-        <label><i class="{property.display_icon}"></i> <span>{property.display_name}</span></label>
+        <label style="width:auto;"><i class="{property.display_icon}"></i> <span>{property.display_name}</span></label>
     </div>
     <div class="form-row">
         <input type="text" id="node-input-{property.name}" style="width:100%;">
@@ -49,7 +50,7 @@ def node_html(node:"noderedpy._nodered.Node") -> str:
         elif isinstance(property, ListProperty):
             properties_html.append(f"""
     <div class="form-row" style="margin-bottom:0px;">
-        <label><i class="{property.display_icon}"></i> <span>{property.display_name}</span></label>
+        <label style="width:auto;"><i class="{property.display_icon}"></i> <span>{property.display_name}</span></label>
     </div>
     <div class="form-row node-input-{property.name}-container-row">
         <ol id="node-input-{property.name}-container" style="height:{property.height}px;"></ol>
@@ -81,7 +82,7 @@ def node_html(node:"noderedpy._nodered.Node") -> str:
         elif isinstance(property, CodeProperty):
             properties_html.append(f"""
     <div class="form-row" style="margin-bottom:0px;">
-        <label><i class="{property.display_icon}"></i> <span>{property.display_name}</span></label>
+        <label style="width:auto;"><i class="{property.display_icon}"></i> <span>{property.display_name}</span></label>
     </div>
     <div class="form-row node-text-editor-row">
         <div style="height:{property.height}px;" class="node-text-editor" id="node-input-{property.name}"></div>
@@ -117,7 +118,7 @@ def node_html(node:"noderedpy._nodered.Node") -> str:
         elif isinstance(property, SpinnerProperty):
             properties_html.append(f"""
     <div class="form-row" style="margin-bottom:0px;">
-        <label><i class="{property.display_icon}"></i> <span>{property.display_name}</span></label>
+        <label style="width:auto;"><i class="{property.display_icon}"></i> <span>{property.display_name}</span></label>
     </div>
     <div class="form-row">
         <input type="text" id="node-input-{property.name}" style="width:calc(100% - 22px);">
@@ -137,6 +138,14 @@ def node_html(node:"noderedpy._nodered.Node") -> str:
             });
 ''')
             default_value = str(property.default)
+        elif isinstance(property, CheckBoxProperty):
+            properties_html.append(f"""
+    <div class="form-row">
+        <label style="width:auto;"><i class="{property.display_icon}"></i> <span>{property.display_name}</span></label>
+        <input type="checkbox" style="margin-left:10px;width:15px;height:15px;margin-bottom:5px;" id="node-input-{property.name}">
+    </div>
+""")
+            default_value = "true" if property.default else "false"
         elif isinstance(property, ComboBoxProperty):
             options = "\n".join([
                 f"""
@@ -146,7 +155,7 @@ def node_html(node:"noderedpy._nodered.Node") -> str:
             ])
             properties_html.append(f"""
     <div class="form-row" style="margin-bottom:0px;">
-        <label><i class="{property.display_icon}"></i> <span>{property.display_name}</span></label>
+        <label style="width:auto;"><i class="{property.display_icon}"></i> <span>{property.display_name}</span></label>
     </div>
     <div class="form-row">
         <select id="node-input-{property.name}Select" style="width:100%;">
@@ -162,6 +171,30 @@ def node_html(node:"noderedpy._nodered.Node") -> str:
             $("#node-input-''' + property.name + '''").val($("#node-input-''' + property.name + ''';").val());
 ''')
             default_value = f'"{property.default}"' if isinstance(property.default, str) else str(property.default)
+#         elif isinstance(property, FileProperty):
+#             properties_html.append(f"""
+#     <div class="form-row" style="display:flex;flex-flow:row;align-items:center;">
+#         <label style="width:auto;margin-bottom:0px;"><i class="{property.display_icon}"></i> <span>{property.display_name}</span></label>
+#         <input type="file" id="node-input-{property.name}" style="flex:1;">
+#     </div>
+# """)
+#             default_value = f'"{property.default}"'
+#         elif isinstance(property, TableProperty):
+#             theader = "\n".join([ f"                <th>{column}</th>" for column in property.default.columns ])
+#             properties_html.append(f"""
+#     <div class="form-row" style="margin-bottom:0px;">
+#         <label style="width:auto;"><i class="{property.display_icon}"></i> <span>{property.display_name}</span></label>
+#     </div>
+#     <div class="form-row" style="display:flex;flex-flow:column;">
+#         <table>
+#             <thead>
+# {theader}
+#             </thead>
+#             <tbody>
+#             </tbody>
+#         </table>
+#     </div>
+# """)
 
         if default_value:
             properties_js.append("            " + property.name + ': { value: ' + default_value + ' }')
