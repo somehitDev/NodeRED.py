@@ -75,8 +75,13 @@
 
 <br>
 
-# version 0.2.5
+## version 0.2.5
 - add "CheckBox" property.
 - add "node" arg into function call.
   - "status", "log" function available.
 - add "name" to verify cache file is targeted on node itself.
+
+<br>
+
+## version 0.2.6
+- "node.js" not installed, download from internet.(18.16.1/latest stable)

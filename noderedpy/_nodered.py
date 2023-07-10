@@ -37,11 +37,80 @@ class RED:
         """
         self.user_dir, self.admin_root, self.port, self.show_default_category, self.editor_theme =\
             user_dir, admin_root, port, show_default_category, self.__default_editor_theme(editor_theme)
-        
+        self.__temp_dir, self.__node_dir =\
+            os.path.join(__path__[0], ".temp"), os.path.join(__path__[0], ".nodejs")
+
         if not self.admin_root.startswith("/"):
             self.admin_root = f"/{self.admin_root}"
 
         self.node_auths = self.__default_node_auth(auths)
+
+        # check node.js exists
+        try:
+            subprocess.call(
+                [ "npm", "--version" ],
+                stdout = subprocess.DEVNULL,
+                stderr = subprocess.STDOUT
+            )
+            self.__npm_path = "npm"
+            self.__node_path = "node"
+        except FileNotFoundError:
+            if not os.path.exists(self.__node_dir):
+                import platform, wget, tarfile
+
+                node_version = "18.16.1"
+                if not os.path.exists(self.__temp_dir):
+                    os.mkdir(self.__temp_dir)
+
+                if sys.platform == "win32":
+                    node_bin_zip = os.path.join(self.__temp_dir, "node.zip")
+                    if platform.architecture()[0] == "32bit":
+                        wget.download(f"https://nodejs.org/dist/v{node_version}/node-v{node_version}-win-x86.zip", node_bin_zip)
+                        zipfile.ZipFile(node_bin_zip).extractall(self.__temp_dir)
+                        shutil.move(os.path.join(self.__temp_dir, f"node-v{node_version}-win-x86"), self.__node_dir)
+                    else:
+                        wget.download(f"https://nodejs.org/dist/v{node_version}/node-v{node_version}-win-x64.zip", node_bin_zip)
+                        zipfile.ZipFile(node_bin_zip).extractall(self.__temp_dir)
+                        shutil.move(os.path.join(self.__temp_dir, f"node-v{node_version}-win-x64"), self.__node_dir)
+
+                    self.__npm_path = os.path.join(self.__node_dir, "npm.exe")
+                    self.__node_path = os.path.join(self.__node_dir, "node.exe")
+                elif sys.platform == "darwin":
+                    node_bin_zip = os.path.join(self.__temp_dir, "node.tar.gz")
+                    if platform.processor() == "arm":
+                        wget.download(f"https://nodejs.org/dist/v{node_version}/node-v{node_version}-darwin-arm64.tar.gz", node_bin_zip)
+                        with tarfile.open(node_bin_zip, "r", encoding = "utf-8") as nbzr:
+                            nbzr.extractall(self.__temp_dir)
+
+                        shutil.move(os.path.join(self.__temp_dir, f"node-v{node_version}-darwin-arm64"), self.__node_dir)
+                    else:
+                        wget.download(f"https://nodejs.org/dist/v{node_version}/node-v{node_version}-darwin-x64.tar.gz", node_bin_zip)
+                        with tarfile.open(node_bin_zip, "r", encoding = "utf-8") as nbzr:
+                            nbzr.extractall(self.__temp_dir)
+
+                        shutil.move(os.path.join(self.__temp_dir, f"node-v{node_version}-darwin-x64"), self.__node_dir)
+
+                    self.__npm_path = os.path.join(self.__node_dir, "bin", "npm")
+                    self.__node_path = os.path.join(self.__node_dir, "bin", "node")
+                else:
+                    node_bin_zip = os.path.join(self.__temp_dir, "node.tar.xz")
+                    if platform.processor() == "arm":
+                        wget.download(f"https://nodejs.org/dist/v{node_version}/node-v{node_version}-linux-armv7l.tar.xz", node_bin_zip)
+                        with tarfile.open(node_bin_zip, "r", encoding = "utf-8") as nbzr:
+                            nbzr.extractall(self.__temp_dir)
+
+                        shutil.move(os.path.join(self.__temp_dir, f"node-v{node_version}-linux-armv7l"), self.__node_dir)
+                    else:
+                        wget.download(f"https://nodejs.org/dist/v{node_version}/node-v{node_version}-linux-x64.tar.xz", node_bin_zip)
+                        with tarfile.open(node_bin_zip, "r", encoding = "utf-8") as nbzr:
+                            nbzr.extractall(self.__temp_dir)
+
+                        shutil.move(os.path.join(self.__temp_dir, f"node-v{node_version}-linux-x64"), self.__node_dir)
+
+                shutil.rmtree(self.__temp_dir)
+
+            self.__npm_path = os.path.join(self.__node_dir, "bin", "npm")
+            self.__node_path = os.path.join(self.__node_dir, "bin", "node")
         
         # set node_red_dir
         if node_red_dir is None:
@@ -60,8 +129,9 @@ class RED:
 
         # setup Node-RED starter
         subprocess.call(
-            [ "npm", "install" ],
+            [ self.__npm_path, "install" ],
             stdout = subprocess.DEVNULL,
+            stderr = subprocess.STDOUT,
             cwd = self.node_red_dir
         )
 
@@ -220,9 +290,9 @@ class RED:
 
         # run Node-RED server
         subprocess.Popen([
-            "node",
+            self.__node_path,
             "index.js"
-        ], shell = False, stdout = sys.stdout if debug else subprocess.DEVNULL, cwd = self.node_red_dir)
+        ], shell = False, stdout = sys.stdout if debug else subprocess.DEVNULL, stderr = subprocess.STDOUT, cwd = self.node_red_dir)
 
         while True:
             if os.path.exists(self.__started_file):
@@ -263,9 +333,9 @@ class RED:
             }, cfw, indent = 4)
 
         subprocess.Popen([
-            "node",
+            self.__node_path,
             "index.js"
-        ], shell = False, stdout = subprocess.DEVNULL, cwd = self.node_red_dir)
+        ], shell = False, stdout = subprocess.DEVNULL, stderr = subprocess.STDOUT, cwd = self.node_red_dir)
 
         while True:
             if os.path.exists(self.__started_file):

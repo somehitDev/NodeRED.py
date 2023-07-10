@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import os, time
+import os
 from noderedpy import (
     RED, Node,
     InputProperty, ListProperty, DictProperty, CodeProperty,

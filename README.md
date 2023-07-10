@@ -16,6 +16,12 @@
 </div>
 <br/><br/>
 
+## 🎛️ requirements
+- node.js 18.16.1 or higher(latest stable)
+  - nodered.py 0.2.6 or higher, automatically download from internet if no node.js installed
+- python 3.7 or higher
+
+<br/><br/>
 
 ## 🌐 install
 ### - using pip
@@ -48,10 +54,11 @@ red = RED(
 - register as decorator
 - See <a href="https://github.com/oyajiDev/NodeRED.py/blob/08b2295ab537be97ad9e9a2f94154cdcb36685d0/noderedpy/decorator.py#L8">noredpy.decorator.register function</a> for details
 ```python
+from noderedpy import Node
 from noderedpy.decorator import register
 
 @register("test")
-def test(props:dict, msg:dict) -> dict:
+def test(node:Node, props:dict, msg:dict) -> dict:
     # user codes here
     return msg
 ```
