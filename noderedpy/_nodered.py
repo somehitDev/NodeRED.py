@@ -52,8 +52,8 @@ class RED:
                 stdout = subprocess.DEVNULL,
                 stderr = subprocess.STDOUT
             )
-            self.__npm_path = "npm"
-            self.__node_path = "node"
+            self.__npm_path = "npm.cmd" if sys.platform == "win32" else "npm"
+            self.__node_path = "node.exe" if sys.platform == "win32" else "node"
         except FileNotFoundError:
             if not os.path.exists(self.__node_dir):
                 import platform, wget, zipfile, tarfile
@@ -109,8 +109,8 @@ class RED:
 
                 shutil.rmtree(self.__temp_dir)
 
-            self.__npm_path = os.path.join(self.__node_dir, "bin", "npm")
-            self.__node_path = os.path.join(self.__node_dir, "bin", "node")
+            self.__npm_path = os.path.join(self.__node_dir, "bin", "npm.cmd" if sys.platform == "win32" else "npm")
+            self.__node_path = os.path.join(self.__node_dir, "bin", "node.exe" if sys.platform == "win32" else "node")
         
         # set node_red_dir
         if node_red_dir is None:

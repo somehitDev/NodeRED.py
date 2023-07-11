@@ -106,3 +106,10 @@
   - on windows, "npm" command not works.
     - change "npm" to "npm.cmd"
   - add import "zipfile".
+
+<br>
+
+## version 0.2.6.post4
+- bug fix.
+  - on windows, "npm" command not works.
+    - change all missing lines.
