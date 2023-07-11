@@ -90,4 +90,11 @@
 
 ## version 0.2.6.post1
 - bug fix.
-  - write output to cache file
+  - write output to cache file(python)
+  - read output cache file(js)
+
+<br>
+
+## version 0.2.6.post2
+- bug fix.
+  - "header" of "editor_theme" now customizable.

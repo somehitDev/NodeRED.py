@@ -144,8 +144,8 @@ class RED:
         })
         header_theme = editor_theme.pop("header", {})
         header_theme.update({
-            "title": "Node-RED.py",
-            "image": None
+            "title": header_theme.pop("title", "Node-RED.py"),
+            "image": header_theme.pop("favicon", None)
         })
         menu_theme = editor_theme.pop("menu", {})
         menu_theme.update({
