@@ -98,3 +98,11 @@
 ## version 0.2.6.post2
 - bug fix.
   - "header" of "editor_theme" now customizable.
+
+<br>
+
+## version 0.2.6.post3
+- bug fixs.
+  - on windows, "npm" command not works.
+    - change "npm" to "npm.cmd"
+  - add import "zipfile".

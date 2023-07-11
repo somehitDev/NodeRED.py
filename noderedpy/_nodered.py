@@ -48,7 +48,7 @@ class RED:
         # check node.js exists
         try:
             subprocess.call(
-                [ "npm", "--version" ],
+                [ "npm.cmd" if sys.platform == "win32" else "npm", "--version" ],
                 stdout = subprocess.DEVNULL,
                 stderr = subprocess.STDOUT
             )
@@ -56,7 +56,7 @@ class RED:
             self.__node_path = "node"
         except FileNotFoundError:
             if not os.path.exists(self.__node_dir):
-                import platform, wget, tarfile
+                import platform, wget, zipfile, tarfile
 
                 node_version = "18.16.1"
                 if not os.path.exists(self.__temp_dir):
