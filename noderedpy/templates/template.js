@@ -1,7 +1,12 @@
 const fs = require("fs"), path = require("path");
 
 let messageCache = {};
-    
+
+function $sleep(ms) {
+    const wakeUpTime = Date.now() + ms;
+    while (Date.now() < wakeUpTime) {}
+}
+
 module.exports = function(RED) {
     function fnNode(config) {
         var node = this;
@@ -17,11 +22,27 @@ module.exports = function(RED) {
                 messageCache.req = message.req;
 
                 reqToSend = {
-                    payload: message.req.payload,
-                    body: message.req.body,
-                    cookie: message.req.cookie,
                     header: {}
                 };
+                try {
+                    reqToSend.payload = JSON.parse(message.req.payload);
+                }
+                catch {
+                    reqToSend.payload = message.req.payload;
+                }
+                try {
+                    reqToSend.body = JSON.parse(message.req.body);
+                }
+                catch {
+                    reqToSend.body = message.req.body;
+                }
+                try {
+                    reqToSend.cookie = JSON.parse(message.req.cookie);
+                }
+                catch {
+                    reqToSend.cookie = message.req.cookie;
+                }
+
                 for (var idx = 0; idx < message.req.rawHeaders.length / 2; idx++) {
                     reqToSend.header[message.req.rawHeaders[idx * 2]] = message.req.rawHeaders[idx * 2 + 1].replaceAll('"', "'");
                 }
@@ -96,6 +117,7 @@ module.exports = function(RED) {
                         }
                     }
                     catch {
+                        // $sleep(1000);
                         continue;
                     }
                 }
@@ -119,12 +141,14 @@ module.exports = function(RED) {
                     node.status({ fill: "green", shape: "dot", text: "Finished" });
                 }
                 else {
-                    node.error(resp.message);
+                    node.error("\n" + resp.message);
+                    console.log("============================= error\n");
                     node.status({ fill: "red", shape: "dot", text: "Stopped, see debug panel" });
                 }
             }
             catch (err) {
-                node.error(err.message);
+                node.error("\n" + err.message);
+                console.log("============================= error\n");
                 node.status({ fill: "red", shape: "dot", text: "Stopped, see debug panel" });
             }
         });

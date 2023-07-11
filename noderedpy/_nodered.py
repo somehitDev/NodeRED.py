@@ -218,6 +218,16 @@ class RED:
             )
         )
 
+    # write output
+    def __write_output(self, output_file:str, res:dict):
+        try:
+            with open(output_file, "w", encoding = "utf-8") as ofw:
+                json.dump(res, ofw, indent = 4)
+        except:
+            os.remove(output_file)
+            res["req"]["body"] = {}
+            self.__write_output(output_file, res)
+
     # check input and run node
     def __check_input_from_node(self):
         input_file, output_file = os.path.join(self.__cache_dir, "input.json"), os.path.join(self.__cache_dir, "output.json")
@@ -238,8 +248,10 @@ class RED:
 
                 node = list(filter(lambda n: n.name == input_data["name"], RED.registered_nodes))[0]
 
-                with open(output_file, "w", encoding = "utf-8") as ofw:
-                    json.dump(node.run(input_data["props"], input_data["msg"]), ofw, indent = 4)
+                self.__write_output(
+                    output_file,
+                    node.run(input_data["props"], input_data["msg"])
+                )
 
     def start(self, callback:MethodType = None, debug:bool = True, start_browser:bool = True):
         """
@@ -445,5 +457,4 @@ class Node:
 
             return resp
         except:
-            print("============================= error\n")
-            return { "state": "fail", "message": traceback.format_exc() }
+            return { "state": "fail", "name": self.name, "message": traceback.format_exc() }

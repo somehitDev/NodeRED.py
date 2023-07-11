@@ -85,3 +85,9 @@
 
 ## version 0.2.6
 - "node.js" not installed, download from internet.(18.16.1/latest stable)
+
+<br>
+
+## version 0.2.6.post1
+- bug fix.
+  - write output to cache file
