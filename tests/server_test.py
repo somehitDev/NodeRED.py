@@ -57,7 +57,8 @@ if __name__ == "__main__":
     red = RED(
         os.path.join(__dirname, ".node-red"),
         os.path.join(__dirname, "node_red_dir"),
-        "/node-red", 1880,
+        "/node-red", 
+        port = 1880,
         editor_theme = {
             "palette": {
                 "editable": False

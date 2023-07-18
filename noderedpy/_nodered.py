@@ -14,7 +14,7 @@ class RED:
     """
     registered_nodes:List["Node"] = []
 
-    def __init__(self, user_dir:str, node_red_dir:str = None, admin_root:str = "/node-red-py", port:int = 1880, show_default_category:bool = True, editor_theme:dict = {}, auths:List[dict] = []):
+    def __init__(self, user_dir:str, node_red_dir:str = None, admin_root:str = "/node-red-py", node_root:str = "/", port:int = 1880, enable_remote_access:bool = True, show_default_category:bool = True, editor_theme:dict = {}, auths:List[dict] = []):
         """
         Set configs of Node-RED and setup
 
@@ -26,8 +26,12 @@ class RED:
             directory for Node-RED starter
         admin_root: str, default "/node-red-py"
             httpAdminRoot of Node-RED settings
+        node_root: str, default "/"
+            httpNodeRoot of Node-RED settings
         port: int, default 1880
             port of Node-RED server
+        enable_remote_access: bool, default True
+            enable remote access of Node-RED or not
         show_default_category: bool, default True
             show default categories of Node-RED or not
         editor_theme: dict, default {}
@@ -35,13 +39,16 @@ class RED:
         auths: List[dict], default []
             auth list for Node-RED
         """
-        self.user_dir, self.admin_root, self.port, self.show_default_category, self.editor_theme =\
-            user_dir, admin_root, port, show_default_category, self.__default_editor_theme(editor_theme)
+        self.user_dir, self.admin_root, self.node_root, self.port, self.enable_remote_access, self.show_default_category, self.editor_theme =\
+            user_dir, admin_root, node_root, port, enable_remote_access, show_default_category, self.__default_editor_theme(editor_theme)
         self.__temp_dir, self.__node_dir =\
             os.path.join(__path__[0], ".temp"), os.path.join(__path__[0], ".nodejs")
 
         if not self.admin_root.startswith("/"):
-            self.admin_root = f"/{self.admin_root}"
+            raise SyntaxError("`admin_root` must starts with '/'!")
+
+        if not self.node_root.startswith("/"):
+            raise SyntaxError("`node_root` must starts with '/'!")
 
         self.node_auths = self.__default_node_auth(auths)
 
@@ -185,6 +192,20 @@ class RED:
 
         return new_node_auths
     
+    def __save_config(self, is_ready:bool):
+        with open(os.path.join(self.node_red_dir, "config.json"), "w", encoding = "utf-8") as cfw:
+            json.dump({
+                "userDir": self.user_dir,
+                "adminRoot": self.admin_root,
+                "nodeRoot": self.node_root,
+                "port": self.port,
+                "enableRemoteAccess": self.enable_remote_access,
+                "showDefaultCategory": self.show_default_category,
+                "userCategory": list(set([ node.category for node in RED.registered_nodes ])),
+                "editorTheme": self.editor_theme,
+                "adminAuth": [] if is_ready else self.node_auths
+            }, cfw, indent = 4)
+    
     def register(self, node_func:MethodType, name:str, category:str = "nodered_py", version:str = "1.0.0", description:str = "", author:str = "nodered.py", keywords:List[str] = [], icon:str = "function.png", properties:List[Property] = []):
         """
         Function to register Node function
@@ -281,16 +302,7 @@ class RED:
         os.mkdir(self.__cache_dir)
 
         # save configs
-        with open(os.path.join(self.node_red_dir, "config.json"), "w", encoding = "utf-8") as cfw:
-            json.dump({
-                "userDir": self.user_dir,
-                "adminRoot": self.admin_root,
-                "port": self.port,
-                "showDefaultCategory": self.show_default_category,
-                "userCategory": list(set([ node.category for node in RED.registered_nodes ])),
-                "editorTheme": self.editor_theme,
-                "adminAuth": self.node_auths
-            }, cfw, indent = 4)
+        self.__save_config(True)
 
         # remove existing nodes
         for node_dir in glob(os.path.join(self.user_dir, "node_modules", "nodered-py-*")):
@@ -333,16 +345,7 @@ class RED:
             os.remove(self.__started_file)
 
         # save configs
-        with open(os.path.join(self.node_red_dir, "config.json"), "w", encoding = "utf-8") as cfw:
-            json.dump({
-                "userDir": self.user_dir,
-                "adminRoot": self.admin_root,
-                "port": self.port,
-                "showDefaultCategory": self.show_default_category,
-                "userCategory": list(set([ node.category for node in RED.registered_nodes ])),
-                "editorTheme": self.editor_theme,
-                "adminAuth": []
-            }, cfw, indent = 4)
+        self.__save_config(False)
 
         subprocess.Popen([
             self.__node_path,

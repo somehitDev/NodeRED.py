@@ -113,3 +113,10 @@
 - bug fix.
   - on windows, "npm" command not works.
     - change all missing lines.
+
+<br>
+
+## version 0.2.7
+- add "node_root", "enable_remote_access" to "RED" init.
+- raise error when "admin_root" and "node_root" not start with "/".
+- fix some code.

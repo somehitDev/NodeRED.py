@@ -20,6 +20,13 @@
 - node.js 18.16.1 or higher(latest stable)
   - nodered.py 0.2.6 or higher, automatically download from internet if no node.js installed
 - python 3.7 or higher
+- tested on
+
+|        OS       | Tested | Pass |
+| --------------- | ------ | ---- |
+| Mac 13(Ventura) |   ✅   |  ✅  |
+| Windows 10      |   ✅   |  ✅  |
+| Linux(WSL)      |   🚫   |      |
 
 <br/><br/>
 
@@ -44,7 +51,7 @@ from noderedpy import RED
 red = RED(
     os.path.join(__dirname, ".node-red"),
     os.path.join(__dirname, "node_red_dir"),
-    "/node-red", 1880
+    "/node-red", "/", 1880
 )
 ```
 
@@ -81,11 +88,11 @@ red.start({debug:bool}, {callback:MethodType})
 <br/><br/>
 
 ## Todos
-[x] type support for "list" and "dict"
+✅ type support for "list" and "dict"
 
 <br/><br/>
 
 ## Roadmap To 2.0
-[x] remove aiohttp server
+✅ remove aiohttp server
 
-[ ] flexible property ui
+🟩 flexible property ui

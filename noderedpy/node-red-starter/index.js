@@ -16,8 +16,8 @@ const RED_server = http.createServer(exapp);
 // set start options
 let opts = {
     editorTheme: configs.editorTheme,
-    httpAdminRoot: configs.adminRoot.startsWith("/") ? configs.adminRoot : `/${configs.adminRoot}`,
-    httpNodeRoot: "/",
+    httpAdminRoot: configs.adminRoot,
+    httpNodeRoot: configs.nodeRoot,
     flowFile: "noderedpy.json",
     userDir: configs.userDir,
     paletteCategories: configs.showDefaultCategory ? configs.userCategory.concat([ "subflows", "common", "function", "network", "sequence", "parser", "storage" ]) : configs.userCategory
@@ -45,7 +45,7 @@ exapp.use(RED.settings.httpNodeRoot, RED.httpNode);
 
 // start node-red
 RED.start().then(() => {
-    RED_server.listen(configs.port, "0.0.0.0", () => {
+    RED_server.listen(configs.port, configs.enableRemoteAccess ? "0.0.0.0" : "127.0.0.1", () => {
         fs.writeFileSync(path.join(__dirname, "started"), "");
     });
 });
