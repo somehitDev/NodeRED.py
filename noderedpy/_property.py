@@ -15,6 +15,10 @@ class Property:
             item.capitalize()
             for item in self.name.split("_")
         ])
+    
+    @property
+    def var_name(self) -> str:
+        return f"np-var_{self.name}"
 
 class CodeProperty(Property):
     def __init__(self, name:str, default:str = "", language:str = None, height:int = 250, required:bool = False, display_icon:str = None):
@@ -27,9 +31,6 @@ class CodeProperty(Property):
 
 class InputProperty(Property):
     def __init__(self, name:str, default:Union[int, float, str] = None, required:bool = False, display_icon:str = None):
-        if not isinstance(default, (int, float, str)):
-            raise TypeError("InputProperty can accept types: [ 'int', 'float', 'str' ]")
-        
         if default is None:
             if isinstance(default, int):
                 default = 0
@@ -37,6 +38,8 @@ class InputProperty(Property):
                 default = 0.0
             else:
                 default = ""
+        elif not isinstance(default, (int, float, str)):
+            raise TypeError("InputProperty can accept types: [ 'int', 'float', 'str' ]")
 
         super().__init__(name, default, required, display_icon)
 
@@ -92,6 +95,12 @@ class ComboBoxProperty(Property):
     def __init__(self, name:str, items:List[Any], default:str = None, required:bool = False, display_icon:str = None):
         if not isinstance(items, list):
             raise TypeError("items of ComboBoxProperty must be type: 'list'")
+        
+        if default is None:
+            if len(items) > 0:
+                default = items[0]
+            else:
+                default = ""
         
         super().__init__(name, default, required, display_icon if display_icon else "fa fa-filter")
         self.items = items

@@ -43,7 +43,7 @@ def node_html(node:"noderedpy._nodered.Node") -> str:
         <label style="width:auto;"><i class="{property.display_icon}"></i> <span>{property.display_name}</span></label>
     </div>
     <div class="form-row">
-        <input type="text" id="node-input-{property.name}" style="width:100%;">
+        <input type="text" id="node-input-{property.var_name}" style="width:100%;">
     </div>
 """)
             default_value = f'"{property.default}"' if isinstance(property.default, str) else str(property.default)
@@ -52,12 +52,12 @@ def node_html(node:"noderedpy._nodered.Node") -> str:
     <div class="form-row" style="margin-bottom:0px;">
         <label style="width:auto;"><i class="{property.display_icon}"></i> <span>{property.display_name}</span></label>
     </div>
-    <div class="form-row node-input-{property.name}-container-row">
-        <ol id="node-input-{property.name}-container" style="height:{property.height}px;"></ol>
+    <div class="form-row node-input-{property.var_name}-container-row">
+        <ol id="node-input-{property.var_name}-container" style="height:{property.height}px;"></ol>
     </div>
 """)
             properties_js_prepare.append('''
-            $("#node-input-''' + property.name + '''-container").editableList({
+            $("#node-input-''' + property.var_name + '''-container").editableList({
                 addItem: (container, idx, opt) => {
                     opt.idx = idx;
                     opt.value = opt.value ?? "";
@@ -68,14 +68,14 @@ def node_html(node:"noderedpy._nodered.Node") -> str:
                 removable: true
             });
 
-            for (var item of this.''' + property.name + ''') {
-                $("#node-input-''' + property.name + '''-container").editableList("addItem", { value: item });
+            for (var item of node["''' + property.var_name + '''"]) {
+                $("#node-input-''' + property.var_name + '''-container").editableList("addItem", { value: item });
             }
 ''')
             properties_js_save.append('''
-            this.''' + property.name + ''' = [];
-            $("#node-input-''' + property.name + '''-container").editableList("items").each((_, item) => {
-                this.''' + property.name + '''.push(item.find("input.input-list-item").val());
+            node["''' + property.var_name + '''"] = [];
+            $("#node-input-''' + property.var_name + '''-container").editableList("items").each((_, item) => {
+                node["''' + property.var_name + '''"].push(item.find("input.input-list-item").val());
             });
 ''')
             default_value = str(property.default)
@@ -85,34 +85,34 @@ def node_html(node:"noderedpy._nodered.Node") -> str:
         <label style="width:auto;"><i class="{property.display_icon}"></i> <span>{property.display_name}</span></label>
     </div>
     <div class="form-row node-text-editor-row">
-        <div style="height:{property.height}px;" class="node-text-editor" id="node-input-{property.name}"></div>
+        <div style="height:{property.height}px;" class="node-text-editor" id="node-input-{property.var_name}"></div>
     </div>
 """)
             if property.language:
                 properties_js_prepare.append('''
-            this.''' + property.name + '''Editor = RED.editor.createEditor({
-                id: "node-input-''' + property.name + '''",
+            node["''' + property.var_name + '''Editor"] = RED.editor.createEditor({
+                id: "node-input-''' + property.var_name + '''",
                 mode: "ace/mode/''' + property.language + '''",
-                value: this.''' + property.name + ''',
+                value: node["''' + property.var_name + '''"],
                 focus: true
             });
 ''')
             else:
                 properties_js_prepare.append('''
-            this.''' + property.name + '''Editor = RED.editor.createEditor({
-                id: "node-input-''' + property.name + '''",
-                value: this.''' + property.name + ''',
+            node["''' + property.var_name + '''Editor"] = RED.editor.createEditor({
+                id: "node-input-''' + property.var_name + '''",
+                value: node["''' + property.var_name + '''"],
                 focus: true
             });
 ''')
             properties_js_cancel.append(f"""
-            this.{property.name}Editor.destroy();
-            delete this.{property.name}Editor;
+            node["{property.var_name}Editor"].destroy();
+            delete node["{property.var_name}Editor"];
 """)
             properties_js_save.append(f"""
-            $("#node-input-{property.name}").val(this.{property.name}Editor.getValue().trim());
-            this.{property.name}Editor.destroy();
-            delete this.{property.name}Editor;
+            $("#node-input-{property.var_name}").val(node["{property.var_name}Editor"].getValue().trim());
+            node["{property.var_name}Editor"].destroy();
+            delete node["{property.var_name}Editor"];
 """)
             default_value = f"`{property.default}`"
         elif isinstance(property, SpinnerProperty):
@@ -121,7 +121,7 @@ def node_html(node:"noderedpy._nodered.Node") -> str:
         <label style="width:auto;"><i class="{property.display_icon}"></i> <span>{property.display_name}</span></label>
     </div>
     <div class="form-row">
-        <input type="text" id="node-input-{property.name}" style="width:calc(100% - 22px);">
+        <input type="text" id="node-input-{property.var_name}" style="width:calc(100% - 22px);">
     </div>
 """)
             spinner_configs = []
@@ -133,7 +133,7 @@ def node_html(node:"noderedpy._nodered.Node") -> str:
                 spinner_configs.append(f"                step: {property.step}")
 
             properties_js_prepare.append('''
-            $("#node-input-''' + property.name + '''").spinner({
+            $("#node-input-''' + property.var_name + '''").spinner({
                 ''' + "\n".join(spinner_configs) + '''
             });
 ''')
@@ -142,7 +142,7 @@ def node_html(node:"noderedpy._nodered.Node") -> str:
             properties_html.append(f"""
     <div class="form-row">
         <label style="width:auto;"><i class="{property.display_icon}"></i> <span>{property.display_name}</span></label>
-        <input type="checkbox" style="margin-left:10px;width:15px;height:15px;margin-bottom:5px;" id="node-input-{property.name}">
+        <input type="checkbox" style="margin-left:10px;width:15px;height:15px;margin-bottom:5px;" id="node-input-{property.var_name}">
     </div>
 """)
             default_value = "true" if property.default else "false"
@@ -158,17 +158,17 @@ def node_html(node:"noderedpy._nodered.Node") -> str:
         <label style="width:auto;"><i class="{property.display_icon}"></i> <span>{property.display_name}</span></label>
     </div>
     <div class="form-row">
-        <select id="node-input-{property.name}Select" style="width:100%;">
+        <select id="node-input-{property.var_name}Select" style="width:100%;">
 {options}
         </select>
-        <input type="text" id="node-input-{property.name}" style="display:none;">
+        <input type="text" id="node-input-{property.var_name}" style="display:none;">
     </div>
 """)
             properties_js_prepare.append('''
-            $("#node-input-''' + property.name + '''Select").val(this.''' + property.name + ''');
+            $("#node-input-''' + property.var_name + '''Select").val($("#node-input-''' + property.var_name + '''").val());
 ''')
             properties_js_save.append('''
-            $("#node-input-''' + property.name + '''").val($("#node-input-''' + property.name + ''';").val());
+            $("#node-input-''' + property.var_name + '''").val($("#node-input-''' + property.var_name + '''Select").val());
 ''')
             default_value = f'"{property.default}"' if isinstance(property.default, str) else str(property.default)
 #         elif isinstance(property, FileProperty):
@@ -197,7 +197,8 @@ def node_html(node:"noderedpy._nodered.Node") -> str:
 # """)
 
         if default_value:
-            properties_js.append("            " + property.name + ': { value: ' + default_value + ' }')
+            required = 'true' if property.required else 'false'
+            properties_js.append('            "' + property.var_name + '": { value: ' + default_value + ', required: ' + required + ' }')
 
     with open(os.path.join(__path__[0], "template.html"), "r", encoding = "utf-8") as tr:
         tt = tr.read()
@@ -227,7 +228,7 @@ def node_js(node:"noderedpy._nodered.Node", cache_dir:str) -> str:
     return tt.replace(
         "{$node_name}", node.name
     ).replace(
-        "{$node_properties}", str([ property.name for property in node.properties])
+        "{$node_properties}", str([ property.var_name for property in node.properties])
     ).replace(
         "{$cache_dir}", cache_dir
     )

@@ -6,7 +6,7 @@ from ._property import (
 )
 
 
-__version__ = "0.2.7"
+__version__ = "0.2.8"
 __author__ = "oyajiDev"
 __email__ = "this.dev.somehit@gmail.com"
 

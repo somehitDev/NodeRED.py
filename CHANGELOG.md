@@ -120,3 +120,12 @@
 - add "node_root", "enable_remote_access" to "RED" init.
 - raise error when "admin_root" and "node_root" not start with "/".
 - fix some code.
+
+<br>
+
+## version 0.2.8
+- bug fixes.
+  - "ComboBoxProperty" value not updated.
+  - if default value is None, no erros more.
+  - use required property.
+- change var names(for freedom of name selection).

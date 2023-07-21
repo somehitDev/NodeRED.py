@@ -60,7 +60,7 @@ module.exports = function(RED) {
                 if (typeof(config_item) == "string" && (config_item.startsWith("{") && config_item.endsWith("}"))) {
                     config_item = JSON.parse(config_item);
                 }
-                configToSend[name] = config_item;
+                configToSend[name.substring(7)] = config_item;
             }
 
             node.status({ fill: "green", shape: "dot", text: "Running" });

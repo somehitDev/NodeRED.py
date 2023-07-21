@@ -29,14 +29,14 @@ if __name__ == "__main__":
         
         @register(
             "property-test", author = "oyajiDev", version = "0.1.0", description = "test for multi properties",
-            icon = None,
+            icon = "database.png",
             properties = [
                 InputProperty("input_prop", "input property"),
                 ListProperty("list_prop", [ "list", "property" ], 150),
                 DictProperty("dict_prop", { "dict": "property" }, 100),
                 SpinnerProperty("spinner_prop", 1),
                 CheckBoxProperty("chkbox_prop", True),
-                ComboBoxProperty("cbox_prop", [ "combobox", "property" ], "property"),
+                ComboBoxProperty("cbox_prop", [ "combobox", "property" ]),
                 CodeProperty("code_prop", "print(1234)", "python")
             ]
         )
