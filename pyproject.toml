@@ -31,12 +31,3 @@ name = "noderedpy"
 
 [project.urls]
 repository = "https://github.com/oyajiDev/NodeRED.py"
-
-[distutils]
-index-servers = pypi testpypi
-
-[pypi]
-repository = https://upload.pypi.org/legacy/ username = oyajiDev
-
-[testpypi]
-repository = https://test.pypi.org/legacy/ username = oyajiDev
