@@ -136,3 +136,4 @@
 - change package from legacy(setup.py) to flit.
 - hide "nodered", "property" from hirarchy.
 - change "editor_theme", "auths" to class.
+- update "README.md"
