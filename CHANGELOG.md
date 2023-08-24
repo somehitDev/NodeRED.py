@@ -129,3 +129,10 @@
   - if default value is None, no erros more.
   - use required property.
 - change var names(for freedom of name selection).
+
+<br>
+
+## version 0.2.9
+- change package from legacy(setup.py) to flit.
+- hide "nodered", "property" from hirarchy.
+- change "editor_theme", "auths" to class.

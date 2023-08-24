@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from typing import List
 from types import MethodType
-from ._nodered import RED, Node
-from ._property import Property
+from .__nodered__ import RED, Node
+from .__property__ import Property
 
 
 def register(name:str, category:str = "nodered_py", version:str = "1.0.0", description:str = "", author:str = "nodered.py", keywords:List[str] = [], icon:str = "function.png", properties:List[Property] = []) -> MethodType:

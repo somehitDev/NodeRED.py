@@ -3,9 +3,11 @@ import os, sys, subprocess, shutil, json, traceback
 from types import MethodType
 from typing import List, Literal
 from glob import glob
-from .templates import package_json, node_html, node_js
-from ._property import Property
-from . import __path__
+from ..templates import package_json, node_html, node_js
+from ..__property__ import Property
+from .theme import REDTheme
+from .auth import AuthCollection
+from .. import __path__
 
 
 class RED:
@@ -14,33 +16,9 @@ class RED:
     """
     registered_nodes:List["Node"] = []
 
-    def __init__(self, user_dir:str, node_red_dir:str = None, admin_root:str = "/node-red-py", node_root:str = "/", port:int = 1880, enable_remote_access:bool = True, show_default_category:bool = True, editor_theme:dict = {}, auths:List[dict] = []):
-        """
-        Set configs of Node-RED and setup
-
-        Parameters
-        ----------
-        user_dir: str, required
-            userDir of Node-RED settings
-        node_red_dir: str, default None
-            directory for Node-RED starter
-        admin_root: str, default "/node-red-py"
-            httpAdminRoot of Node-RED settings
-        node_root: str, default "/"
-            httpNodeRoot of Node-RED settings
-        port: int, default 1880
-            port of Node-RED server
-        enable_remote_access: bool, default True
-            enable remote access of Node-RED or not
-        show_default_category: bool, default True
-            show default categories of Node-RED or not
-        editor_theme: dict, default {}
-            editorTheme of Node-RED server (for detail information, see https://github.com/node-red/node-red/wiki/Design:-Editor-Themes)
-        auths: List[dict], default []
-            auth list for Node-RED
-        """
-        self.user_dir, self.admin_root, self.node_root, self.port, self.enable_remote_access, self.show_default_category, self.editor_theme =\
-            user_dir, admin_root, node_root, port, enable_remote_access, show_default_category, self.__default_editor_theme(editor_theme)
+    def __init__(self, user_dir:str, node_red_dir:str, admin_root:str, node_root:str, port:int, default_flow:str, remote_access:bool, default_category_visible:bool):
+        self.user_dir, self.admin_root, self.node_root, self.port, self.default_flow, self.remote_access, self.default_category_visible, self.__editor_theme, self.__node_auths =\
+            user_dir, admin_root, node_root, port, default_flow, remote_access, default_category_visible, REDTheme(), AuthCollection()
         self.__temp_dir, self.__node_dir =\
             os.path.join(__path__[0], ".temp"), os.path.join(__path__[0], ".nodejs")
 
@@ -49,8 +27,6 @@ class RED:
 
         if not self.node_root.startswith("/"):
             raise SyntaxError("`node_root` must starts with '/'!")
-
-        self.node_auths = self.__default_node_auth(auths)
 
         # check node.js exists
         try:
@@ -142,55 +118,13 @@ class RED:
             cwd = self.node_red_dir
         )
 
-    # create default editor_theme
-    def __default_editor_theme(self, editor_theme:dict):
-        page_theme = editor_theme.pop("page", {})
-        page_theme.update({
-            "title": page_theme.pop("title", "Node-RED.py"),
-            "favicon": page_theme.pop("favicon", os.path.join(__path__[0], "assets", "python-logo.png"))
-        })
-        header_theme = editor_theme.pop("header", {})
-        header_theme.update({
-            "title": header_theme.pop("title", "Node-RED.py"),
-            "image": header_theme.pop("favicon", None)
-        })
-        menu_theme = editor_theme.pop("menu", {})
-        menu_theme.update({
-            "menu-item-palette": False
-        })
-        palette_theme = editor_theme.pop("palette", {})
-        palette_theme.update({
-            "editable": palette_theme.pop("editable", True)
-        })
-        project_feature = editor_theme.pop("projects", {})
-        project_feature.update({
-            "enabled": project_feature.pop("enabled", True)
-        })
-
-        editor_theme.update({
-            "page": page_theme,
-            "header": header_theme,
-            "menu": menu_theme,
-            "tours": editor_theme.pop("tours", False),
-            "userMenu": editor_theme.pop("userMenu", True),
-            "palette": palette_theme,
-            "projects": project_feature
-        })
-
-        return editor_theme
+    @property
+    def editor_theme(self) -> REDTheme:
+        return self.__editor_theme
     
-    # fill empty auth in auths
-    def __default_node_auth(self, node_auths:List[dict]) -> List[dict]:
-        new_node_auths = []
-        for node_auth in node_auths:
-            if ("username" in node_auth.keys() and not node_auth["username"] in ( None, "" )) and ("password" in node_auth.keys() and not node_auth["password"] in ( None, "" )):
-                new_node_auths.append({
-                    "username": node_auth["username"],
-                    "password": node_auth["password"],
-                    "permissions": node_auth.pop("permissions", "*")
-                })
-
-        return new_node_auths
+    @property
+    def node_auths(self) -> AuthCollection:
+        return self.__node_auths
     
     def __save_config(self, is_ready:bool):
         with open(os.path.join(self.node_red_dir, "config.json"), "w", encoding = "utf-8") as cfw:
@@ -199,11 +133,12 @@ class RED:
                 "adminRoot": self.admin_root,
                 "nodeRoot": self.node_root,
                 "port": self.port,
-                "enableRemoteAccess": self.enable_remote_access,
-                "showDefaultCategory": self.show_default_category,
+                "defaultFlow": self.default_flow,
+                "enableRemoteAccess": self.remote_access,
+                "showDefaultCategory": self.default_category_visible,
                 "userCategory": list(set([ node.category for node in RED.registered_nodes ])),
-                "editorTheme": self.editor_theme,
-                "adminAuth": [] if is_ready else self.node_auths
+                "editorTheme": self.editor_theme.to_dict(),
+                "adminAuth": [] if is_ready else self.node_auths.to_list()
             }, cfw, indent = 4)
     
     def register(self, node_func:MethodType, name:str, category:str = "nodered_py", version:str = "1.0.0", description:str = "", author:str = "nodered.py", keywords:List[str] = [], icon:str = "function.png", properties:List[Property] = []):
@@ -302,7 +237,7 @@ class RED:
         os.mkdir(self.__cache_dir)
 
         # save configs
-        self.__save_config(True)
+        self.__save_config(False)
 
         # remove existing nodes
         for node_dir in glob(os.path.join(self.user_dir, "node_modules", "nodered-py-*")):
@@ -345,7 +280,7 @@ class RED:
             os.remove(self.__started_file)
 
         # save configs
-        self.__save_config(False)
+        self.__save_config(True)
 
         subprocess.Popen([
             self.__node_path,
@@ -381,6 +316,60 @@ class RED:
 
             if killed:
                 break
+
+class REDBuilder:
+    def __init__(self):
+        self.__user_dir:str = None
+        self.__node_red_dir:str = None
+        self.__admin_root:str = "/node-red-py"
+        self.__node_root:str = "/"
+        self.__port:int = 1880
+        self.__default_flow:str = "noderedpy.json"
+        self.__remote_access:bool = True
+        self.__default_category_visible:bool = True
+
+    def set_user_dir(self, user_dir:str) -> "REDBuilder":
+        self.__user_dir = user_dir
+        return self
+    
+    def set_node_red_dir(self, node_red_dir:str) -> "REDBuilder":
+        self.__node_red_dir = node_red_dir
+        return self
+    
+    def set_admin_root(self, admin_root:str) -> "REDBuilder":
+        self.__admin_root = admin_root
+        return self
+    
+    def set_node_root(self, node_root:str) -> "REDBuilder":
+        self.__node_root = node_root
+        return self
+    
+    def set_port(self, port:int) -> "REDBuilder":
+        self.__port = port
+        return self
+    
+    def set_default_flow(self, flow_file:str) -> "REDBuilder":
+        self.__default_flow = flow_file
+        return self
+
+    def set_remote_access(self, remote_access:bool) -> "REDBuilder":
+        self.__remote_access = remote_access
+        return self
+    
+    def set_default_category_visible(self, default_category_visible:bool) -> "REDBuilder":
+        self.__default_category_visible = default_category_visible
+        return self
+    
+    def build(self) -> RED:
+        if self.__user_dir is None:
+            raise ValueError("`user_dir` must be set!")
+
+        return RED(
+            self.__user_dir, self.__node_red_dir,
+            self.__admin_root, self.__node_root, self.__port, self.__default_flow,
+            self.__remote_access, self.__default_category_visible
+        )
+
 
 class NodeCommunicator:
     def __init__(self, message_file:str, node_name:str):

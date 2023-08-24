@@ -18,7 +18,7 @@ let opts = {
     editorTheme: configs.editorTheme,
     httpAdminRoot: configs.adminRoot,
     httpNodeRoot: configs.nodeRoot,
-    flowFile: "noderedpy.json",
+    flowFile: configs.defaultFlow,
     userDir: configs.userDir,
     paletteCategories: configs.showDefaultCategory ? configs.userCategory.concat([ "subflows", "common", "function", "network", "sequence", "parser", "storage" ]) : configs.userCategory
 };
@@ -26,10 +26,15 @@ let opts = {
 if (Array.isArray(configs.adminAuth) && configs.adminAuth.length > 0) {
     var realAuth = [];
     for (var auth of configs.adminAuth) {
-        auth.password = require("bcryptjs").hashSync(auth.password, 8)
-        realAuth.push(auth);
+        realAuth.push({
+            username: auth.username,
+            password: require("bcryptjs").hashSync(auth.password, 8),
+            permissions: auth.permissions
+        });
     }
 
+    console.log(configs.adminAuth);
+    console.log(realAuth);
     opts.adminAuth = {
         type: "credentials",
         users: realAuth

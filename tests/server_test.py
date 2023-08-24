@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 from noderedpy import (
-    RED, Node,
+    REDBuilder, Auth, Node,
     InputProperty, ListProperty, DictProperty, CodeProperty,
     SpinnerProperty, CheckBoxProperty, ComboBoxProperty
 )
@@ -54,23 +54,40 @@ if __name__ == "__main__":
 
             return msg
 
-    red = RED(
-        os.path.join(__dirname, ".node-red"),
-        os.path.join(__dirname, "node_red_dir"),
-        "/node-red", 
-        port = 1880,
-        editor_theme = {
-            "palette": {
-                "editable": False
-            },
-            "projects": {
-                "enabled": False
-            }
-        },
-        auths = [
-            { "username": "node-red-py", "password": "p@ssword" }
-        ]
+    # get RED object from builder
+    red = REDBuilder()\
+        .set_user_dir(os.path.join(__dirname, ".node-red"))\
+        .set_node_red_dir(os.path.join(__dirname, "node_red_dir"))\
+        .set_admin_root("/node-red")\
+        .set_port(1880)\
+        .set_remote_access(False).build()
+    
+    # set editor theme
+    red.editor_theme.palette.editable = False
+    red.editor_theme.projects.enabled = False
+
+    # add auths
+    red.node_auths.append(
+        Auth(username = "node-red-py", password = "p@ssword")
     )
+
+    # red = RED(
+    #     os.path.join(__dirname, ".node-red"),
+    #     os.path.join(__dirname, "node_red_dir"),
+    #     "/node-red", 
+    #     port = 1880,
+    #     editor_theme = {
+    #         "palette": {
+    #             "editable": False
+    #         },
+    #         "projects": {
+    #             "enabled": False
+    #         }
+    #     },
+    #     auths = [
+    #         { "username": "node-red-py", "password": "p@ssword" }
+    #     ]
+    # )
 
     app = TotalApp()
     red.register(app.test2, "test2")

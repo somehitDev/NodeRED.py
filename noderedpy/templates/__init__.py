@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import os, noderedpy
-from .._property import (
+from ..__property__ import (
     InputProperty, ListProperty,
     SpinnerProperty, CheckBoxProperty, ComboBoxProperty, CodeProperty,
     # FileProperty, TableProperty
@@ -8,7 +8,7 @@ from .._property import (
 from . import __path__
 
 
-def package_json(node:"noderedpy._nodered.Node") -> str:
+def package_json(node:"noderedpy.__nodered__.Node") -> str:
     with open(os.path.join(__path__[0], "template.json"), "r", encoding = "utf-8") as tr:
         tt = tr.read()
 
@@ -33,7 +33,7 @@ def package_json(node:"noderedpy._nodered.Node") -> str:
 
     return tt
 
-def node_html(node:"noderedpy._nodered.Node") -> str:
+def node_html(node:"noderedpy.__nodered__.Node") -> str:
     properties_html, properties_js, properties_js_prepare, properties_js_cancel, properties_js_save = [], [], [], [], []
     default_value = None
     for property in node.properties:
@@ -221,7 +221,7 @@ def node_html(node:"noderedpy._nodered.Node") -> str:
         "{$properties_js_save}", "\n".join(properties_js_save)
     )
 
-def node_js(node:"noderedpy._nodered.Node", cache_dir:str) -> str:
+def node_js(node:"noderedpy.__nodered__.Node", cache_dir:str) -> str:
     with open(os.path.join(__path__[0], "template.js"), "r", encoding = "utf-8") as tr:
         tt = tr.read()
 

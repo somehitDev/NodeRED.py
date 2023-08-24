@@ -46,12 +46,30 @@ python -m pip install git+https://github.com/oyajiDev/NodeRED.py.git
 ## 🛠 usage
 ### Node-RED initialize
 ```python
-from noderedpy import RED
+from noderedpy import REDBuilder, RED, Auth
 
+# using builder
+red = REDBuilder()\
+    .set_user_dir("{user_dir}")\
+    .set_node_red_dir("{node_red_dir}")\
+    .set_admin_root("{admin_root}")\
+    .set_node_root("{node_root}")\
+    .set_port(port).build()
+
+# using RED directly
 red = RED(
-    os.path.join(__dirname, ".node-red"),
-    os.path.join(__dirname, "node_red_dir"),
-    "/node-red", "/", 1880
+    "{user_dir}", "{node_red_dir}",
+    "{admin_root}", "{node_root}", port, "{default_flow}",
+    remote_access, default_category_visible
+)
+
+# change editor theme settings
+red.editor_theme.palette.editable = False
+red.editor_theme.projects.enabled = False
+
+# add auths
+red.node_auths.append(
+    Auth(username = "node-red-py", password = "p@ssword")
 )
 ```
 
