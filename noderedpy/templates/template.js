@@ -65,9 +65,9 @@ module.exports = function(RED) {
 
             node.status({ fill: "green", shape: "dot", text: "Running" });
 
-            const inpFile = path.join("{$cache_dir}", "input.json");
-            const outFile = path.join("{$cache_dir}", "output.json");
-            const messageFile = path.join("{$cache_dir}", "message.json");
+            const inpFile = path.join("{$cache_dir}", "node_input.json");
+            const outFile = path.join("{$cache_dir}", "node_output.json");
+            const messageFile = path.join("{$cache_dir}", "node_message.json");
 
             // remove if outFile exists before run
             if (fs.existsSync(outFile)) {

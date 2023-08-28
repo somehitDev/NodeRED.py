@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os, sys, subprocess, shutil, json, traceback
 from types import MethodType
-from typing import List, Literal
+from typing import List, Dict, Any, Literal, Union
 from glob import glob
 from ..templates import package_json, node_html, node_js
 from ..__property__ import Property
@@ -15,6 +15,7 @@ class RED:
     Node-RED manager class
     """
     registered_nodes:List["Node"] = []
+    registered_routes:List[Dict[str, Any]] = []
 
     def __init__(self, user_dir:str, node_red_dir:str, admin_root:str, node_root:str, port:int, default_flow:str, remote_access:bool, default_category_visible:bool):
         self.user_dir, self.admin_root, self.node_root, self.port, self.default_flow, self.remote_access, self.default_category_visible, self.__editor_theme, self.__node_auths =\
@@ -104,11 +105,15 @@ class RED:
                 if not { "index.js", "package.json" }.issubset(set(os.listdir(node_red_dir))):
                     raise RuntimeError("Target `node_red_dir` is not Node-RED dir format!")
 
+                shutil.copyfile(os.path.join(__path__[0], "node-red-starter", "route.js"), os.path.join(node_red_dir, "route.js"))
                 shutil.copyfile(os.path.join(__path__[0], "node-red-starter", "index.js"), os.path.join(node_red_dir, "index.js"))
             else:
                 os.mkdir(node_red_dir)
+                shutil.copyfile(os.path.join(__path__[0], "node-red-starter", "route.js"), os.path.join(node_red_dir, "route.js"))
                 shutil.copyfile(os.path.join(__path__[0], "node-red-starter", "index.js"), os.path.join(node_red_dir, "index.js"))
                 shutil.copyfile(os.path.join(__path__[0], "node-red-starter", "package.json"), os.path.join(node_red_dir, "package.json"))
+
+        self.__started_file = os.path.join(self.node_red_dir, "started")
 
         # setup Node-RED starter
         subprocess.call(
@@ -138,7 +143,14 @@ class RED:
                 "showDefaultCategory": self.default_category_visible,
                 "userCategory": list(set([ node.category for node in RED.registered_nodes ])),
                 "editorTheme": self.editor_theme.to_dict(),
-                "adminAuth": [] if is_ready else self.node_auths.to_list()
+                "adminAuth": [] if is_ready else self.node_auths.to_list(),
+                "cacheDir": os.path.join(self.user_dir, ".cache"),
+                "routes": [
+                    { "url": route["url"], "method": route["method"] }
+                    if route["method"] in ( "get", "post" ) else
+                    route
+                    for route in RED.registered_routes
+                ]
             }, cfw, indent = 4)
     
     def register(self, node_func:MethodType, name:str, category:str = "nodered_py", version:str = "1.0.0", description:str = "", author:str = "nodered.py", keywords:List[str] = [], icon:str = "function.png", properties:List[Property] = []):
@@ -174,39 +186,110 @@ class RED:
             )
         )
 
+    def route(route_func:MethodType, url:str, method:Literal["get", "post"]):
+        """
+        Function to register route to Node-RED
+
+        Parameters
+        ----------
+        route_func: MethodType, required
+            route function to register
+        url: str, required
+            url of route point
+        method: str, required
+            method of route point
+            options: get, post
+        """
+        if not url.startswith("/"):
+            raise ValueError("url must starts with `/`!")
+
+        RED.registered_routes.append({
+            "url": url,
+            "method": method,
+            "target": route_func
+        })
+
+    def static(self, url:str, path:os.PathLike):
+        """
+        Function to register route to Node-RED
+
+        Parameters
+        ----------
+        url: str, required
+            url of static point
+        path: PathLike, required
+            file path for static point
+        """
+        RED.registered_routes.append({
+            "url": url,
+            "method": "static",
+            "path": path
+        })
+
     # write output
-    def __write_output(self, output_file:str, res:dict):
+    def __write_node_output(self, output_file:str, res:dict):
         try:
             with open(output_file, "w", encoding = "utf-8") as ofw:
                 json.dump(res, ofw, indent = 4)
         except:
             os.remove(output_file)
             res["req"]["body"] = {}
-            self.__write_output(output_file, res)
+            self.__write_node_output(output_file, res)
+
+    def __write_route_output(self, output_file:str, res:Union[str, dict]):
+        with open(output_file, "w", encoding = "utf-8") as ofw:
+            if isinstance(res, str):
+                ofw.write(res)
+            else:
+                json.dump(res, ofw, indent = 4)
 
     # check input and run node
-    def __check_input_from_node(self):
-        input_file, output_file = os.path.join(self.__cache_dir, "input.json"), os.path.join(self.__cache_dir, "output.json")
+    def __check_input_from_node_red(self):
+        node_input_file, node_output_file =\
+            os.path.join(self.__cache_dir, "input.json"), os.path.join(self.__cache_dir, "output.json")
+        route_input_file, route_output_file =\
+            os.path.join(self.__cache_dir, "route_input.json"), os.path.join(self.__cache_dir, "route_output.json")
 
         while True:
-            if os.path.exists(input_file):
+            # if node input exists
+            if os.path.exists(node_input_file):
                 # read input file
                 while True:
                     # if cannot read file or read during file writing, read file until can read
                     try:
-                        with open(input_file, "r", encoding = "utf-8") as ifr:
+                        with open(node_input_file, "r", encoding = "utf-8") as ifr:
                             input_data = json.load(ifr)
                         
-                        os.remove(input_file)
+                        os.remove(node_input_file)
                         break
                     except json.JSONDecodeError:
                         pass
 
                 node = list(filter(lambda n: n.name == input_data["name"], RED.registered_nodes))[0]
 
-                self.__write_output(
-                    output_file,
+                self.__write_node_output(
+                    node_output_file,
                     node.run(input_data["props"], input_data["msg"])
+                )
+
+            # if route input exists
+            if os.path.exists(route_input_file):
+                # read input file
+                while True:
+                    # if cannot read file or read during file writing, read file until can read
+                    try:
+                        with open(route_input_file, "r", encoding = "utf-8") as ifr:
+                            input_data = json.load(ifr)
+                        
+                        os.remove(route_input_file)
+                        break
+                    except json.JSONDecodeError:
+                        pass
+
+                route = list(filter(lambda r: r["url"] == input_data["url"], RED.registered_routes))[0]["target"]
+                self.__write_route_output(
+                    route_output_file,
+                    route(input_data["data"])
                 )
 
     def start(self, callback:MethodType = None, debug:bool = True, start_browser:bool = True):
@@ -223,9 +306,6 @@ class RED:
 
         # setup user_dir
         self.__start_for_ready()
-
-        # set started flag file
-        self.__started_file = os.path.join(self.node_red_dir, "started")
         # kill if process listen on port
         self.stop()
 
@@ -247,6 +327,21 @@ class RED:
         for node in RED.registered_nodes:
             node.create(self.user_dir, self.__cache_dir)
 
+        if self.editor_theme.page.favicon is not None:
+            # convert png to ico if not ico file
+            if not os.path.splitext(self.editor_theme.page.favicon)[-1] == ".ico":
+                from PIL import Image
+
+                Image.open(self.editor_theme.page.favicon).save(
+                    os.path.join(self.node_red_dir, "favicon.ico")
+                )
+            # if ico, copy file
+            else:
+                shutil.copyfile(
+                    self.editor_theme.page.favicon,
+                    os.path.join(self.node_red_dir, "favicon.ico")
+                )
+
         # run Node-RED server
         subprocess.Popen([
             self.__node_path,
@@ -265,7 +360,7 @@ class RED:
                 break
 
         try:
-            self.__check_input_from_node()
+            self.__check_input_from_node_red()
         except KeyboardInterrupt:
             self.stop()
 
@@ -273,9 +368,9 @@ class RED:
         """
         Start Node-RED for setup default userDir
         """
-        import time
+        # stop for safety
+        self.stop()
 
-        self.__started_file = os.path.join(self.node_red_dir, "started")
         if os.path.exists(self.__started_file):
             os.remove(self.__started_file)
 
@@ -292,6 +387,7 @@ class RED:
                 self.stop()
                 break
 
+        import time
         time.sleep(1)
 
     def stop(self):
@@ -422,11 +518,11 @@ class Node:
 
         self.name, self.category, self.version, self.description, self.author, self.icon, self.properties =\
             name, category, version, description, author, icon, properties
-        
+
         self.__node_func = node_func
 
     def create(self, node_red_user_dir:str, node_red_user_cache_dir:str):
-        self.__communicator = NodeCommunicator(os.path.join(node_red_user_cache_dir, "message.json"), self.name)
+        self.__communicator = NodeCommunicator(os.path.join(node_red_user_cache_dir, "node_message.json"), self.name)
         node_dir = os.path.join(node_red_user_dir, "node_modules", self.name if self.name.startswith("nodered-py-") else f"nodered-py-{self.name}")
         os.makedirs(os.path.join(node_dir, "lib"))
 

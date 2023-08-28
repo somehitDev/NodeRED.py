@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 import os
 from noderedpy import (
-    REDBuilder, Auth, Node,
+    REDBuilder, RED, Auth, Node,
     InputProperty, ListProperty, DictProperty, CodeProperty,
     SpinnerProperty, CheckBoxProperty, ComboBoxProperty
 )
-from noderedpy.decorator import register
+from noderedpy.decorator import register, route
 
 __dirname = os.path.dirname(os.path.realpath(__file__))
 if __name__ == "__main__":
@@ -61,7 +61,15 @@ if __name__ == "__main__":
         .set_admin_root("/node-red")\
         .set_port(1880)\
         .set_remote_access(False).build()
-    
+
+    # # init RED object directly
+    # red = RED(
+    #     os.path.join(__dirname, ".node-red"),
+    #     os.path.join(__dirname, "node_red_dir"),
+    #     "/node-red", 
+    #     port = 1880
+    # )
+
     # set editor theme
     red.editor_theme.palette.editable = False
     red.editor_theme.projects.enabled = False
@@ -71,23 +79,25 @@ if __name__ == "__main__":
         Auth(username = "node-red-py", password = "p@ssword")
     )
 
-    # red = RED(
-    #     os.path.join(__dirname, ".node-red"),
-    #     os.path.join(__dirname, "node_red_dir"),
-    #     "/node-red", 
-    #     port = 1880,
-    #     editor_theme = {
-    #         "palette": {
-    #             "editable": False
-    #         },
-    #         "projects": {
-    #             "enabled": False
-    #         }
-    #     },
-    #     auths = [
-    #         { "username": "node-red-py", "password": "p@ssword" }
-    #     ]
-    # )
+    # register routes
+    @route("/nodered-py-api/test", "get")
+    def test_route(params:dict) -> dict:
+        return { "state": "success" }
+    
+    @route("/nodered-py-api/test2", "get")
+    def test_route2(params:dict) -> str:
+        return """
+<!DOCTYPE html>
+<html>
+    123412341234
+</html>
+"""
+
+    @route("/nodered-py-api/test3", "post")
+    def test_route3(datas:dict) -> dict:
+        return { "state": "success" }
+    
+    red.static("/nodered-py-static", os.path.join(__dirname, "static"))
 
     app = TotalApp()
     red.register(app.test2, "test2")

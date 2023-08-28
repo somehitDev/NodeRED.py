@@ -137,3 +137,14 @@
 - hide "nodered", "property" from hirarchy.
 - change "editor_theme", "auths" to class.
 - update "README.md"
+
+<br>
+
+## version 0.2.10
+- add "route", "static" functions.
+  - route is function to register http endpoint to express.js
+  - static is function to register static endpoint to express.js
+- register favicon to express.js server.
+  - use "editor_theme.page.favicon" file.
+- update "README.md"
+- update tests.

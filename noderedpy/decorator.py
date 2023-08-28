@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from typing import List
+import codecs, pickle, marshal
+from typing import List, Literal, Type
 from types import MethodType
 from .__nodered__ import RED, Node
 from .__property__ import Property
@@ -38,5 +39,31 @@ def register(name:str, category:str = "nodered_py", version:str = "1.0.0", descr
         )
 
         return node_func
+    
+    return decorator
+
+def route(url:str, method:Literal["get", "post"]) -> MethodType:
+    """
+    Decorator to register route to Node-RED
+
+    Parameters
+    ----------
+    url: str, required
+        url of route point
+    method: str, required
+        method of route point
+        options: get, post
+    """
+    if not url.startswith("/"):
+        raise ValueError("url must starts with `/`!")
+
+    def decorator(route_func:MethodType):
+        RED.registered_routes.append({
+            "url": url,
+            "method": method,
+            "target": route_func
+        })
+
+        return route_func
     
     return decorator

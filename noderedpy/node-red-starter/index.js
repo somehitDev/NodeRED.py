@@ -33,8 +33,6 @@ if (Array.isArray(configs.adminAuth) && configs.adminAuth.length > 0) {
         });
     }
 
-    console.log(configs.adminAuth);
-    console.log(realAuth);
     opts.adminAuth = {
         type: "credentials",
         users: realAuth
@@ -47,6 +45,14 @@ RED.init(RED_server, opts);
 exapp.use("/", express.static("web"));
 exapp.use(RED.settings.httpAdminRoot, RED.httpAdmin);
 exapp.use(RED.settings.httpNodeRoot, RED.httpNode);
+
+// map routes
+require("./route").setupRoutes(exapp, configs.cacheDir, configs.routes);
+// set favicon if exists
+const faviconFile = path.join(__dirname, "favicon.ico");
+if (fs.existsSync(faviconFile)) {
+    exapp.get("/favicon.ico", express.static(faviconFile));
+}
 
 // start node-red
 RED.start().then(() => {

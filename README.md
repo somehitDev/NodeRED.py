@@ -76,7 +76,7 @@ red.node_auths.append(
 <br/>
 
 ### register Node
-- register as decorator
+#### register as decorator
 - See <a href="https://github.com/oyajiDev/NodeRED.py/blob/08b2295ab537be97ad9e9a2f94154cdcb36685d0/noderedpy/decorator.py#L8">noredpy.decorator.register function</a> for details
 ```python
 from noderedpy import Node
@@ -87,7 +87,7 @@ def test(node:Node, props:dict, msg:dict) -> dict:
     # user codes here
     return msg
 ```
-- register from Node-RED object
+#### register from Node-RED object
 - See <a href="https://github.com/oyajiDev/NodeRED.py/blob/c205b617296d3ef14e93f08e72657fd41ab8d081/noderedpy/_nodered.py#L85">noredpy.decorator.register function</a> for details
 ```python
 api = API()
@@ -96,6 +96,38 @@ red.register("test", api.test)
 ```
 - See <a href="https://github.com/oyajiDev/NodeRED.py/blob/08b2295ab537be97ad9e9a2f94154cdcb36685d0/noderedpy/_property.py">noderedpy._property</a> for details of "Property"
 - See <a href="https://github.com/oyajiDev/NodeRED.py/blob/master/tests/server_test.py">example</a> for details.
+
+<br>
+
+### register route
+#### route(get, post)
+- register as decorator
+```python
+from noderedpy.decorator import route
+
+# get
+@route("{route_url}", "get")
+def route1(params:dict) -> dict:
+    return {}
+
+# post
+@route("{route_url}", "post")
+def route1(datas:dict) -> dict:
+    return {}
+```
+- register from Node-RED object
+```python
+# get
+red.route(lambda params: {}, "{route_url}", "get")
+
+# post
+red.route(lambda datas: {}, "{route_url}", "post")
+```
+
+#### static
+```python
+red.static("/static", "{static_directory_or_file_path}")
+```
 
 <br/>
 

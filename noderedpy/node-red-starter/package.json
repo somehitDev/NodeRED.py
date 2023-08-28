@@ -5,6 +5,7 @@
     "author": "oyajiDev",
     "license": "MIT",
     "dependencies": {
+        "express": "^4.18.2",
         "node-red": "^3.0.2",
         "node-red-contrib-flow-manager": "^0.7.4"
     }
