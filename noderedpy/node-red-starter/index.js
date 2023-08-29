@@ -39,6 +39,7 @@ if (Array.isArray(configs.adminAuth) && configs.adminAuth.length > 0) {
     }
 }
 
+// console.log(configs.editorTheme);
 RED.init(RED_server, opts);
 
 // node-red default routes
@@ -51,7 +52,7 @@ require("./route").setupRoutes(exapp, configs.cacheDir, configs.routes);
 // set favicon if exists
 const faviconFile = path.join(__dirname, "favicon.ico");
 if (fs.existsSync(faviconFile)) {
-    exapp.get("/favicon.ico", express.static(faviconFile));
+    exapp.use("/favicon.ico", express.static(faviconFile));
 }
 
 // start node-red

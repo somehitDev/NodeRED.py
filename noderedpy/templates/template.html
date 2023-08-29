@@ -23,7 +23,7 @@
         inputs: 1, outputs: 1,
         icon: {$node_icon},
         label: function() {
-            return this.name;
+            return this.name || "{$node_name}";
         },
         oneditprepare: function() {
             var node = this;

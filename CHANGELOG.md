@@ -148,3 +148,16 @@
   - use "editor_theme.page.favicon" file.
 - update "README.md"
 - update tests.
+
+<br>
+
+## version 0.2.11
+- remove "pandas" from requirements.
+- fix bugs.
+  - error in route mapping.
+- separate "red", "node", "route" from "__init__".
+  - update related files.
+- add exception handle to route.
+  - if error, error message from traceback will return.
+- add "display_name" to property.
+- add lint text to property classes.

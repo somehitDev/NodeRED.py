@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-import codecs, pickle, marshal
-from typing import List, Literal, Type
+from typing import List, Literal
 from types import MethodType
-from .__nodered__ import RED, Node
+from .__nodered__.red import RED
+from .__nodered__.node import Node
 from .__property__ import Property
+from .__nodered__.route import Route
 
 
 def register(name:str, category:str = "nodered_py", version:str = "1.0.0", description:str = "", author:str = "nodered.py", keywords:List[str] = [], icon:str = "function.png", properties:List[Property] = []) -> MethodType:
@@ -54,15 +55,10 @@ def route(url:str, method:Literal["get", "post"]) -> MethodType:
         method of route point
         options: get, post
     """
-    if not url.startswith("/"):
-        raise ValueError("url must starts with `/`!")
-
     def decorator(route_func:MethodType):
-        RED.registered_routes.append({
-            "url": url,
-            "method": method,
-            "target": route_func
-        })
+        RED.registered_routes.append(
+            Route(url, method, route_func)
+        )
 
         return route_func
     
