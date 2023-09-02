@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os, noderedpy
 from ..__property__ import (
+    PropertyDivider, Property,
     InputProperty, ListProperty,
     SpinnerProperty, CheckBoxProperty, ComboBoxProperty, CodeProperty,
     # FileProperty, TableProperty
@@ -35,7 +36,7 @@ def package_json(node:"noderedpy.__nodered__.Node") -> str:
 
 def node_html(node:"noderedpy.__nodered__.Node") -> str:
     properties_html, properties_js, properties_js_prepare, properties_js_cancel, properties_js_save = [], [], [], [], []
-    default_value = None
+
     for property in node.properties:
         if isinstance(property, InputProperty):
             properties_html.append(f"""
@@ -195,6 +196,12 @@ def node_html(node:"noderedpy.__nodered__.Node") -> str:
 #         </table>
 #     </div>
 # """)
+        else:
+            if isinstance(property, PropertyDivider):
+                properties_html.append("""
+    <hr>
+""")
+            default_value = None
 
         if default_value:
             required = 'true' if property.required else 'false'
@@ -228,7 +235,7 @@ def node_js(node:"noderedpy.__nodered__.Node", cache_dir:str) -> str:
     return tt.replace(
         "{$node_name}", node.name
     ).replace(
-        "{$node_properties}", str([ property.var_name for property in node.properties])
+        "{$node_properties}", str([ property.var_name for property in node.properties if isinstance(property, Property)])
     ).replace(
         "{$cache_dir}", cache_dir
     )

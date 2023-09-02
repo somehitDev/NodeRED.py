@@ -161,3 +161,15 @@
   - if error, error message from traceback will return.
 - add "display_name" to property.
 - add lint text to property classes.
+
+<br>
+
+## version 0.2.12
+- remove "default_category_visible" parameter from RED.
+  - update "REDBuilder".
+- add "default_categories" parameter to RED.
+  - update "REDBuilder".
+- add "PropertyDivider" property.
+  - generates horizontal line in Node-RED editor dialog.
+- add lint text to REDBuilder.
+- update "README.md"

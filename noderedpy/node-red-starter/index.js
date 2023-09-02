@@ -20,7 +20,7 @@ let opts = {
     httpNodeRoot: configs.nodeRoot,
     flowFile: configs.defaultFlow,
     userDir: configs.userDir,
-    paletteCategories: configs.showDefaultCategory ? configs.userCategory.concat([ "subflows", "common", "function", "network", "sequence", "parser", "storage" ]) : configs.userCategory
+    paletteCategories: configs.categories
 };
 // set auth
 if (Array.isArray(configs.adminAuth) && configs.adminAuth.length > 0) {

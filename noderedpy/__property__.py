@@ -14,6 +14,9 @@ class Property:
     def var_name(self) -> str:
         return f"np-var_{self.name}"
 
+class PropertyDivider:
+    pass
+
 class CodeProperty(Property):
     def __init__(self, name:str, default:str = "", language:str = None, height:int = 250, required:bool = False, display_name:str = None, display_icon:str = None):
         """

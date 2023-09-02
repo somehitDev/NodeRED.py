@@ -7,8 +7,8 @@
 <br/>
 
 <div align="center">
-    <a href="https://github.com/oyajiDev/HU4PY/blob/main/LICENSE">
-        <img src="https://img.shields.io/github/license/oyajiDev/HU4PY.svg" alt="MIT License" />
+    <a href="https://github.com/oyajiDev/NodeRED.py/blob/main/LICENSE">
+        <img src="https://img.shields.io/github/license/oyajiDev/NodeRED.py.svg" alt="MIT License" />
     </a>
     <a href="https://pypi.org/project/nodered.py/">
         <img src="https://img.shields.io/pypi/v/nodered.py.svg" alt="pypi" />
@@ -54,13 +54,17 @@ red = REDBuilder()\
     .set_node_red_dir("{node_red_dir}")\
     .set_admin_root("{admin_root}")\
     .set_node_root("{node_root}")\
-    .set_port(port).build()
+    .set_port(port)\
+    .set_default_flow("{default_flow}")\
+    .set_remote_access(remote_access)\
+    .set_default_categories([{default_categories}])\
+    .build()
 
 # using RED directly
 red = RED(
     "{user_dir}", "{node_red_dir}",
     "{admin_root}", "{node_root}", port, "{default_flow}",
-    remote_access, default_category_visible
+    remote_access, [{default_categories}]
 )
 
 # change editor theme settings

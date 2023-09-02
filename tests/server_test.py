@@ -3,7 +3,7 @@ import os
 from noderedpy import (
     REDBuilder, RED, Auth, Node,
     InputProperty, ListProperty, DictProperty, CodeProperty,
-    SpinnerProperty, CheckBoxProperty, ComboBoxProperty
+    SpinnerProperty, CheckBoxProperty, ComboBoxProperty, PropertyDivider
 )
 from noderedpy.decorator import register, route
 
@@ -36,6 +36,7 @@ if __name__ == "__main__":
                 DictProperty("dict_prop", { "dict": "property" }, 100),
                 SpinnerProperty("spinner_prop", 1),
                 CheckBoxProperty("chkbox_prop", True),
+                PropertyDivider(),
                 ComboBoxProperty("cbox_prop", [ "combobox", "property" ]),
                 CodeProperty("code_prop", "print(1234)", "python")
             ]
