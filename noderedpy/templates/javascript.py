@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+import os
+from typing import List
+
+
+def node_js(name:str, prop_names:List[str], cache_dir:os.PathLike):
+    return """
 const fs = require("fs"), path = require("path");
 
 let messageCache = {};
@@ -55,7 +62,7 @@ module.exports = function(RED) {
             }
 
             var configToSend = {};
-            for (var name of {$node_properties}) {
+            for (var name of {$prop_names}) {
                 var config_item = config[name];
                 if (typeof(config_item) == "string" && (config_item.startsWith("{") && config_item.endsWith("}"))) {
                     config_item = JSON.parse(config_item);
@@ -76,7 +83,7 @@ module.exports = function(RED) {
 
             // send inputs to python
             fs.writeFileSync(inpFile, JSON.stringify({
-                name: "{$node_name}",
+                name: "{$name}",
                 props: configToSend, msg: message
             }, null, "    "));
 
@@ -86,7 +93,7 @@ module.exports = function(RED) {
                 if (fs.existsSync(messageFile)) {
                     try {
                         var resp_msg = JSON.parse(fs.readFileSync(messageFile));
-                        if (resp_msg.name == "{$node_name}") {
+                        if (resp_msg.name == "{$name}") {
                             fs.unlinkSync(messageFile);
 
                             if (resp_msg.status != undefined) {
@@ -111,7 +118,7 @@ module.exports = function(RED) {
                 if (fs.existsSync(outFile)) {
                     try {
                         resp = JSON.parse(fs.readFileSync(outFile));
-                        if (resp.name == "{$node_name}") {
+                        if (resp.name == "{$name}") {
                             fs.unlinkSync(outFile);
                             break;
                         }
@@ -141,18 +148,24 @@ module.exports = function(RED) {
                     node.status({ fill: "green", shape: "dot", text: "Finished" });
                 }
                 else {
-                    node.error("\n" + resp.message);
-                    console.log("============================= error\n");
+                    node.error(`
+${resp.message}`);
+                    console.log(`============================= error
+`);
                     node.status({ fill: "red", shape: "dot", text: "Stopped, see debug panel" });
                 }
             }
             catch (err) {
-                node.error("\n" + err.message);
-                console.log("============================= error\n");
+                node.error(`
+${err.message}`);
+                console.log(`============================= error
+`);
                 node.status({ fill: "red", shape: "dot", text: "Stopped, see debug panel" });
             }
         });
     }
 
-    RED.nodes.registerType("{$node_name}", fnNode);
+    RED.nodes.registerType("{$name}", fnNode);
 }
+""".replace("{$name}", name).replace("{$prop_names}", str(prop_names))\
+    .replace("{$cache_dir}", cache_dir)

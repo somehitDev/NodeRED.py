@@ -37,11 +37,11 @@ class MenuTheme:
 
 @dataclass
 class PaletteTheme:
-    editable:bool = True
+    allow_install:bool = True
 
     def to_dict(self) -> dict:
         return {
-            "editable": self.editable
+            "allow_install": self.allow_install
         }
 
 @dataclass

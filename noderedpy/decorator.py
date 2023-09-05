@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 from typing import List, Literal
 from types import MethodType
-from .__nodered__.red import RED
-from .__nodered__.node import Node
-from .__property__ import Property
-from .__nodered__.route import Route
+from .nodered.red import RED
+from .nodered.node import Node
+from .nodered.red.editor.widget import Widget
+from .nodered.route import Route
 
 
-def register(name:str, category:str = "nodered_py", version:str = "1.0.0", description:str = "", author:str = "nodered.py", keywords:List[str] = [], icon:str = "function.png", properties:List[Property] = []) -> MethodType:
+def register(name:str, category:str = "nodered_py", version:str = "1.0.0", description:str = "", author:str = "nodered.py", keywords:List[str] = [], icon:str = "function.png", color:str = "#FDD0A2", widgets:List[Widget] = []) -> MethodType:
     """
     Decorator to register Node function
 
@@ -27,15 +27,16 @@ def register(name:str, category:str = "nodered_py", version:str = "1.0.0", descr
         extra keywords of Node
     icon: str, default function.png
         icon of Node(html)
-    properties: List[noderedpy._property.Property]
-        propertis of Node
+    widgets: List[Widget]
+        list of widgets to display in editor dialog
     """
     def decorator(node_func:MethodType):
         RED.registered_nodes.append(
             Node(
                 name, category,
                 version, description, author, keywords,
-                icon, properties, node_func
+                icon, color,
+                widgets, node_func
             )
         )
 

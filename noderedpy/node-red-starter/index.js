@@ -20,7 +20,8 @@ let opts = {
     httpNodeRoot: configs.nodeRoot,
     flowFile: configs.defaultFlow,
     userDir: configs.userDir,
-    paletteCategories: configs.categories
+    paletteCategories: configs.categories,
+    functionGlobalContext: configs.globals
 };
 // set auth
 if (Array.isArray(configs.adminAuth) && configs.adminAuth.length > 0) {

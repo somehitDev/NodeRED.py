@@ -33,7 +33,7 @@
 - create "CodeProperty"
 - "DictProperty" inherits "CodeProperty" with "json" language setting
 
-<br/>
+<br/><br/>
 
 ## version 0.2.0
 - add <a href="https://github.com/oyajiDev/NodeRED.py/blob/deea7530d6fcda9cdf6d76e9b5f827064de5722c/noderedpy/_nodered.py#L60">editorTheme</a>
@@ -50,13 +50,13 @@
 - remove "nodered-py-" prefix from Node name.
   - "nodered-py-" only attach to directory of Node.
 
-<br>
+<br/>
 
 ## version 0.2.2
 - change node-red command arguments to config.json.
 - add <a href="https://github.com/oyajiDev/NodeRED.py/blob/f5aff33113d2038f7a49cd61b233dbef1ea659dd/tests/server_test.py#L55">"auths"</a> options.
 
-<br>
+<br/>
 
 ## version 0.2.3
 - change the order of arguments in function "start".
@@ -66,14 +66,14 @@
 - update examples.
 - fix bug on auth configs.
 
-<br>
+<br/>
 
 ## version 0.2.4
 - remove unnecessary code and comments.
 - "palette" of "editor_theme" works properly.
 - replace "index.js" file of launch directory.
 
-<br>
+<br/>
 
 ## version 0.2.5
 - add "CheckBox" property.
@@ -81,25 +81,25 @@
   - "status", "log" function available.
 - add "name" to verify cache file is targeted on node itself.
 
-<br>
+<br/>
 
 ## version 0.2.6
 - "node.js" not installed, download from internet.(18.16.1/latest stable)
 
-<br>
+<br/>
 
 ## version 0.2.6.post1
 - bug fix.
   - write output to cache file(python)
   - read output cache file(js)
 
-<br>
+<br/>
 
 ## version 0.2.6.post2
 - bug fix.
   - "header" of "editor_theme" now customizable.
 
-<br>
+<br/>
 
 ## version 0.2.6.post3
 - bug fixs.
@@ -107,21 +107,21 @@
     - change "npm" to "npm.cmd"
   - add import "zipfile".
 
-<br>
+<br/>
 
 ## version 0.2.6.post4
 - bug fix.
   - on windows, "npm" command not works.
     - change all missing lines.
 
-<br>
+<br/>
 
 ## version 0.2.7
 - add "node_root", "enable_remote_access" to "RED" init.
 - raise error when "admin_root" and "node_root" not start with "/".
 - fix some code.
 
-<br>
+<br/>
 
 ## version 0.2.8
 - bug fixes.
@@ -130,7 +130,7 @@
   - use required property.
 - change var names(for freedom of name selection).
 
-<br>
+<br/>
 
 ## version 0.2.9
 - change package from legacy(setup.py) to flit.
@@ -138,7 +138,7 @@
 - change "editor_theme", "auths" to class.
 - update "README.md"
 
-<br>
+<br/>
 
 ## version 0.2.10
 - add "route", "static" functions.
@@ -149,7 +149,7 @@
 - update "README.md"
 - update tests.
 
-<br>
+<br/>
 
 ## version 0.2.11
 - remove "pandas" from requirements.
@@ -162,7 +162,7 @@
 - add "display_name" to property.
 - add lint text to property classes.
 
-<br>
+<br/>
 
 ## version 0.2.12
 - remove "default_category_visible" parameter from RED.
@@ -172,4 +172,21 @@
 - add "PropertyDivider" property.
   - generates horizontal line in Node-RED editor dialog.
 - add lint text to REDBuilder.
-- update "README.md"
+- update "README.md".
+
+<br/>
+<br/>
+
+## version 0.3.0
+- change "properties" parameter of "register" to "widgets".
+- change "PropertyDivider" to "Divider".
+- add "Tab" widget.
+- add "node_globals" to "RED", "REDBuilder".
+- fix module tree.
+  - split "RED" and "REDBuilder" script file.
+  - split properties to each script file.
+    - add "TypedInputProperty".
+  - split template functions to each script file.
+  - all major classes can access from top of module.
+- update "README.md".
+- update tests.

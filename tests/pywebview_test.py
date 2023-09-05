@@ -15,7 +15,7 @@ if __name__ == "__main__":
     class TotalApp:
         count = 0
 
-        @register("test", properties = [
+        @register("test", widgets = [
             InputProperty("test_prop", "1234"),
             ListProperty("list_prop", [ 1, 2, 3, 4 ]),
             DictProperty("dict_prop", { "a": 1 })
@@ -44,15 +44,11 @@ if __name__ == "__main__":
     #     os.path.join(__dirname, "node_red_dir"),
     #     "/node-red",
     #     port = 1880,
-    #     editor_theme = {
-    #         "projects": {
-    #             "enabled": False
-    #         }
-    #     }
+    #     remote_access = False
     # )
 
     # set editor theme
-    red.editor_theme.palette.editable = False
+    red.editor_theme.palette.allow_install = False
     red.editor_theme.projects.enabled = False
 
     # add auths

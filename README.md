@@ -7,6 +7,8 @@
 <br/>
 
 <div align="center">
+    <img src="https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11-blue" />
+    <br>
     <a href="https://github.com/oyajiDev/NodeRED.py/blob/main/LICENSE">
         <img src="https://img.shields.io/github/license/oyajiDev/NodeRED.py.svg" alt="MIT License" />
     </a>
@@ -26,7 +28,7 @@
 | --------------- | ------ | ---- |
 | Mac 13(Ventura) |   ✅   |  ✅  |
 | Windows 10      |   ✅   |  ✅  |
-| Linux(WSL)      |   🚫   |      |
+| Linux(RPI)      |   ✅   |  ✅  |
 
 <br/><br/>
 
@@ -58,13 +60,15 @@ red = REDBuilder()\
     .set_default_flow("{default_flow}")\
     .set_remote_access(remote_access)\
     .set_default_categories([{default_categories}])\
+    .set_node_globals({global_variables})\
     .build()
 
 # using RED directly
 red = RED(
     "{user_dir}", "{node_red_dir}",
     "{admin_root}", "{node_root}", port, "{default_flow}",
-    remote_access, [{default_categories}]
+    remote_access, [{default_categories}],
+    {global_variables}
 )
 
 # change editor theme settings
@@ -146,7 +150,11 @@ red.start({debug:bool}, {callback:MethodType})
 
 <br/><br/>
 
-## Roadmap To 2.0
+## Roadmap To 0.2.0
 ✅ remove aiohttp server
 
-🟩 flexible property ui
+## Roadmap to 0.3.0
+✅ add Tab.
+
+🟩 more property types.(processing...)
+  - TypedInput

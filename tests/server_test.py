@@ -2,8 +2,10 @@
 import os
 from noderedpy import (
     REDBuilder, RED, Auth, Node,
+    Tab, Divider,
     InputProperty, ListProperty, DictProperty, CodeProperty,
-    SpinnerProperty, CheckBoxProperty, ComboBoxProperty, PropertyDivider
+    SpinnerProperty, CheckBoxProperty, ComboBoxProperty,
+    TypedInputProperty
 )
 from noderedpy.decorator import register, route
 
@@ -12,7 +14,7 @@ if __name__ == "__main__":
     class TotalApp:
         count = 0
 
-        @register("test", properties = [
+        @register("test", widgets = [
             InputProperty("test_prop", "1234"),
             ListProperty("list_prop", [ 1, 2, 3, 4 ]),
             DictProperty("dict_prop", { "a": 1 })
@@ -30,15 +32,32 @@ if __name__ == "__main__":
         @register(
             "property-test", author = "oyajiDev", version = "0.1.0", description = "test for multi properties",
             icon = "database.png",
-            properties = [
-                InputProperty("input_prop", "input property"),
-                ListProperty("list_prop", [ "list", "property" ], 150),
-                DictProperty("dict_prop", { "dict": "property" }, 100),
-                SpinnerProperty("spinner_prop", 1),
-                CheckBoxProperty("chkbox_prop", True),
-                PropertyDivider(),
-                ComboBoxProperty("cbox_prop", [ "combobox", "property" ]),
-                CodeProperty("code_prop", "print(1234)", "python")
+            widgets = [
+                Tab(
+                    "common",
+                    [
+                        InputProperty("input_prop", "input property"),
+                        ListProperty("list_prop", [ "list", "property" ], 150),
+                        DictProperty("dict_prop", { "dict": "property" }, 100),
+                        TypedInputProperty("typed_input_prop", { "type": "type1", "value": "value" }, types = [ "type1", "type2" ])
+                    ]
+                ),
+                Tab(
+                    "html",
+                    [
+                        SpinnerProperty("spinner_prop", 1, one_line = True),
+                        CheckBoxProperty("chkbox_prop", True),
+                        ComboBoxProperty("cbox_prop", [ "combobox", "property" ], one_line = True),
+                    ],
+                    icon = "fa fa-html5"
+                ),
+                Tab(
+                    "code",
+                    [
+                        CodeProperty("code_prop", "print(1234)", "python")
+                    ],
+                    icon = "fa fa-code"
+                )
             ]
         )
         def property_test(node:Node, props:dict, msg:dict) -> dict:
@@ -72,7 +91,7 @@ if __name__ == "__main__":
     # )
 
     # set editor theme
-    red.editor_theme.palette.editable = False
+    red.editor_theme.palette.allow_install = False
     red.editor_theme.projects.enabled = False
 
     # add auths
