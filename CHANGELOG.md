@@ -190,3 +190,6 @@
   - all major classes can access from top of module.
 - update "README.md".
 - update tests.
+- add Node-RED variables to property value.
+  - "`$msg.{name}`" or "`$msg[{name}]`" treats as "{name}" of message.
+  - "`$global.{name}`" or "`$global[{name}]`" treats as "{name}" of Node-RED global variables.

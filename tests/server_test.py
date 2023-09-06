@@ -80,7 +80,8 @@ if __name__ == "__main__":
         .set_node_red_dir(os.path.join(__dirname, "node_red_dir"))\
         .set_admin_root("/node-red")\
         .set_port(1880)\
-        .set_remote_access(False).build()
+        .set_remote_access(False)\
+        .set_node_globals({ "var1": "global variable" }).build()
 
     # # init RED object directly
     # red = RED(

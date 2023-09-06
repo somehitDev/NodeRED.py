@@ -64,8 +64,18 @@ module.exports = function(RED) {
             var configToSend = {};
             for (var name of {$prop_names}) {
                 var config_item = config[name];
-                if (typeof(config_item) == "string" && (config_item.startsWith("{") && config_item.endsWith("}"))) {
-                    config_item = JSON.parse(config_item);
+                if (typeof(config_item) == "string") {
+                    if ((config_item.startsWith("{") && config_item.endsWith("}"))) {
+                        config_item = JSON.parse(config_item);
+                    }
+                    else if (config_item.startsWith("$msg")) {
+                        // config_item = message.payload[config_item.substring(4)];
+                        config_item = eval(config_item.replace("$msg", "message"));
+                    }
+                    else if (config_item.startsWith("$global")) {
+                        // config_item = node.context().global[config_item.substring(7)];
+                        config_item = eval(config_item.replace("$global", "node.context().global"));
+                    }
                 }
                 configToSend[name.substring(7)] = config_item;
             }
