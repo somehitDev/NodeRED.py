@@ -65,7 +65,7 @@ class Tab(Widget):
         rendered_tab.elements.extend([
             hg.DIV(
                 *elements,
-                id = f"tab-item-{self.title.lower()}",
+                id = self.id,
                 style = "display:none;"
             )
         ])
