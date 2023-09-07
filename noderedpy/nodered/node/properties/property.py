@@ -10,4 +10,13 @@ class Property:
     
     @property
     def var_name(self) -> str:
-        return f"np-var_{self.name}"
+        name_for_id = self.name.lower()\
+            .replace(
+                " ", "_"
+            ).replace(
+                ".", "_"
+            ).replace(
+                ":", "_"
+            )
+
+        return f"np-var_{name_for_id}"
