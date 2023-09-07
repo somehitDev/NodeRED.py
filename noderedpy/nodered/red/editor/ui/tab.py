@@ -45,7 +45,7 @@ class Tab(Widget):
             
             rendered_tab.props.update(rendered_widget.props)
             rendered_tab.props_map.update(rendered_widget.props_map)
-            widget_html.append(hg.mark_safe(rendered_widget.html) + "\n")
+            widget_html.append(hg.mark_safe(rendered_widget.html + "\n"))
             rendered_tab.prepare += rendered_widget.prepare
             rendered_tab.cancel += rendered_widget.cancel
             rendered_tab.save += rendered_widget.save
@@ -87,7 +87,7 @@ class Tabs:
             
             rendered_tabs.props.update(rendered_tab.props)
             rendered_tabs.props_map.update(rendered_tab.props_map)
-            tab_html.append(hg.mark_safe(rendered_tab.html) + "\n")
+            tab_html.append(hg.mark_safe(rendered_tab.html + "\n"))
             rendered_tabs.prepare += rendered_tab.prepare
             rendered_tabs.cancel += rendered_tab.cancel
             rendered_tabs.save += rendered_tab.save
