@@ -82,7 +82,7 @@ class InputProperty(Property, Widget):
                 hg.DIV(
                     hg.INPUT(
                         id = f"node-input-{self.var_name}",
-                        type = "text",
+                        type = self.input_type,
                         style = "width: 100%;"
                     ),
                     _class = "form-row"
