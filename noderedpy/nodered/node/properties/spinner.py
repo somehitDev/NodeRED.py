@@ -37,7 +37,7 @@ class SpinnerProperty(Property, Widget):
 
     def render(self) -> RenderedWidget:
         rendered = RenderedWidget(
-            props = { self.var_name: { "value": self.default } },
+            props = { self.var_name: { "value": self.default, "required": self.required } },
             props_map = { self.name: self.name },
             html = "",
             prepare = "", cancel = "", save = ""

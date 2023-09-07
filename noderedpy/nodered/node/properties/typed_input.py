@@ -37,7 +37,7 @@ class TypedInputProperty(Property, Widget):
         rendered = RenderedWidget(
             props = {
                 f"{self.var_name}-typed-input-type": { "value": self.default["type"] },
-                f"{self.var_name}-typed-input-value": { "value": self.default["value"] }
+                f"{self.var_name}-typed-input-value": { "value": self.default["value"], "required": self.required }
             },
             props_map = {
                 self.name: {
