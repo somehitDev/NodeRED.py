@@ -47,12 +47,10 @@ class InputProperty(Property, Widget):
     def render(self) -> RenderedWidget:
         rendered = RenderedWidget(
             props = { self.var_name: { "value": self.default, "required": self.required } },
-            props_map = { self.name: self.name },
-            html = "",
-            prepare = "", cancel = "", save = ""
+            props_map = { self.name: self.name }
         )
         if self.one_line:
-            rendered.html = hg.render(
+            rendered.elements.append(
                 hg.DIV(
                     hg.LABEL(
                         hg.I(_class = self.display_icon, style = "margin-right:5px;"),
@@ -66,10 +64,10 @@ class InputProperty(Property, Widget):
                     ),
                     _class = "form-row",
                     style = "display:flex;flex-flow:row;"
-                ), {}
+                )
             )
         else:
-            rendered.html = hg.render(
+            rendered.elements.extend([
                 hg.DIV(
                     hg.LABEL(
                         hg.I(_class = self.display_icon), " ",
@@ -77,8 +75,7 @@ class InputProperty(Property, Widget):
                     ),
                     _class = "form-row",
                     style = "margin-bottom: 0px;"
-                ), {}
-            ) + hg.render(
+                ),
                 hg.DIV(
                     hg.INPUT(
                         id = f"node-input-{self.var_name}",
@@ -86,7 +83,7 @@ class InputProperty(Property, Widget):
                         style = "width: 100%;"
                     ),
                     _class = "form-row"
-                ), {}
-            )
+                )
+            ])
 
         return rendered

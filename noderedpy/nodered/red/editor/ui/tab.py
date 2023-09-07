@@ -18,6 +18,8 @@ class Tab(Widget):
         icon: str, default "fa fa-cog"
             icon of tab
         """
+        super().__init__()
+
         self.__title, self.__icon = title, icon
         self.__widgets = widgets
 
@@ -30,18 +32,15 @@ class Tab(Widget):
         return f"tab-item-{self.title.lower()}"
 
     def render(self) -> RenderedWidget:
-        widget_html = []
+        elements = []
         rendered_tab = RenderedWidget(
-            props = {}, props_map = {},
-            html = "",
             prepare = """
             tabs.addTab({
                 id: '""" + self.id + """',
                 iconClass: '""" + self.__icon + """',
                 label: '""" + self.title + """'
             });
-""",
-            cancel = "", save = ""
+"""
         )
 
         for widget in self.__widgets:
@@ -49,18 +48,18 @@ class Tab(Widget):
             
             rendered_tab.props.update(rendered_widget.props)
             rendered_tab.props_map.update(rendered_widget.props_map)
-            widget_html.append(hg.mark_safe(rendered_widget.html + "\n"))
+            elements.extend(rendered_widget.elements)
             rendered_tab.prepare += rendered_widget.prepare
             rendered_tab.cancel += rendered_widget.cancel
             rendered_tab.save += rendered_widget.save
 
-        rendered_tab.html = hg.render(
+        rendered_tab.elements.extend([
             hg.DIV(
-                *widget_html,
+                *elements,
                 id = f"tab-item-{self.title.lower()}",
                 style = "display:none;"
-            ), {}
-        )
+            )
+        ])
 
         return rendered_tab
 
@@ -69,10 +68,9 @@ class Tabs:
         self.__tabs = tabs
 
     def render(self) -> RenderedWidget:
-        tab_html = []
+        elements = []
         rendered_tabs = RenderedWidget(
             props = {}, props_map = {},
-            html = "",
             prepare = """
             var tabs = RED.tabs.create({
                 id: "tab-frame",
@@ -82,8 +80,7 @@ class Tabs:
                     RED.tray.resize();
                 }
             })
-""",
-            cancel = "", save = ""
+"""
         )
         
         for tab in self.__tabs:
@@ -91,7 +88,7 @@ class Tabs:
             
             rendered_tabs.props.update(rendered_tab.props)
             rendered_tabs.props_map.update(rendered_tab.props_map)
-            tab_html.append(hg.mark_safe(rendered_tab.html + "\n"))
+            elements.extend(rendered_tab.elements)
             rendered_tabs.prepare += rendered_tab.prepare
             rendered_tabs.cancel += rendered_tab.cancel
             rendered_tabs.save += rendered_tab.save
@@ -99,20 +96,19 @@ class Tabs:
         if len(self.__tabs) > 0:
             rendered_tabs.prepare += f"\n            tabs.activateTab('{self.__tabs[0].id}');"
 
-        rendered_tabs.html = hg.render(
+        rendered_tabs.elements.extend([
             hg.DIV(
                 hg.UL(
                     id = "tab-frame",
                     style = "min-width: 600px;"
                 ),
                 _class = "form-row"
-            ), {}
-        ) + hg.render(
+            ),
             hg.DIV(
-                *tab_html,
+                *elements,
                 id = "tabs-content",
                 style = "min-height:calc(100% - 95px);"
-            ), {}
-        )
+            )
+        ])
 
         return rendered_tabs

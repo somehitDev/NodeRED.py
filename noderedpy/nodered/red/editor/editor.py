@@ -13,9 +13,7 @@ class Editor:
 
     def render(self) -> RenderedWidget:
         rendered_editor = RenderedWidget(
-            props = {}, props_map = {},
-            html = "",
-            prepare = "", cancel = "", save = ""
+            props = {}, props_map = {}
         )
         
         # classify property, tab
@@ -42,7 +40,7 @@ class Editor:
 
             rendered_editor.props.update(rendered_widget.props)
             rendered_editor.props_map.update(rendered_widget.props_map)
-            rendered_editor.html += rendered_widget.html + "\n"
+            rendered_editor.elements.extend(rendered_widget.elements)
             rendered_editor.prepare += rendered_widget.prepare
             rendered_editor.cancel += rendered_widget.cancel
             rendered_editor.save += rendered_widget.save

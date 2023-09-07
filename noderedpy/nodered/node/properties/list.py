@@ -32,12 +32,10 @@ class ListProperty(Property, Widget):
     def render(self) -> RenderedWidget:
         rendered = RenderedWidget(
             props = { self.var_name: { "value": self.default, "required": self.required } },
-            props_map = { self.name: self.name },
-            html = "",
-            prepare = "", cancel = "", save = ""
+            props_map = { self.name: self.name }
         )
 
-        rendered.html = hg.render(
+        rendered.elements.extend([
             hg.DIV(
                 hg.LABEL(
                     hg.I(_class = self.display_icon), " ",
@@ -45,16 +43,15 @@ class ListProperty(Property, Widget):
                 ),
                 _class = "form-row",
                 style = "margin-bottom: 0px;"
-            ), {}
-        ) + hg.render(
+            ),
             hg.DIV(
                 hg.OL(
                     id = f"node-input-{self.var_name}-container",
                     style = f"height:{self.height}px;"
                 ),
                 _class = f"form-row node-input-{self.var_name}-container-row"
-            ), {}
-        )
+            )
+        ])
         rendered.prepare = """
             $('#node-input-""" + self.var_name + """-container').editableList({
                 addItem: (container, idx, opt) => {

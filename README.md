@@ -105,7 +105,7 @@ red.register("test", api.test)
 - See <a href="https://github.com/oyajiDev/NodeRED.py/blob/08b2295ab537be97ad9e9a2f94154cdcb36685d0/noderedpy/_property.py">noderedpy._property</a> for details of "Property"
 - See <a href="https://github.com/oyajiDev/NodeRED.py/blob/master/tests/server_test.py">example</a> for details.
 
-<br>
+<br/>
 
 ### register route
 #### route(get, post)
@@ -136,6 +136,19 @@ red.route(lambda datas: {}, "{route_url}", "post")
 ```python
 red.static("/static", "{static_directory_or_file_path}")
 ```
+
+### custom editor widget
+```python
+from noderedpy.nodered.red.editor.widget import Widget, RenderedWidget
+
+class MyWidget(Widget):
+    def __init__(self, *args, **kwargs):
+        super().__init__()
+
+    def render(self) -> RenderedWidget:
+        return RenderedWidget()
+```
+- see <a href="">Property</a> or <a href="">Widget</a> for details.
 
 <br/>
 

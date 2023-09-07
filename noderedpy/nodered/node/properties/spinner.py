@@ -38,13 +38,11 @@ class SpinnerProperty(Property, Widget):
     def render(self) -> RenderedWidget:
         rendered = RenderedWidget(
             props = { self.var_name: { "value": self.default, "required": self.required } },
-            props_map = { self.name: self.name },
-            html = "",
-            prepare = "", cancel = "", save = ""
+            props_map = { self.name: self.name }
         )
 
         if self.one_line:
-            rendered.html = hg.render(
+            rendered.elements.append(
                 hg.DIV(
                     hg.LABEL(
                         hg.I(_class = self.display_icon, style = "margin-right:5px;"),
@@ -59,10 +57,10 @@ class SpinnerProperty(Property, Widget):
                     _class = "form-row",
                     style = "display:flex;flex-flow:row;",
                     **{ "data-flex": "true" }
-                ), {}
+                )
             )
         else:
-            rendered.html = hg.render(
+            rendered.elements.extend([
                 hg.DIV(
                     hg.LABEL(
                         hg.I(_class = self.display_icon), " ",
@@ -70,8 +68,7 @@ class SpinnerProperty(Property, Widget):
                     ),
                     _class = "form-row",
                     style = "margin-bottom: 0px;"
-                ), {}
-            ) + hg.render(
+                ),
                 hg.DIV(
                     hg.INPUT(
                         id = f"node-input-{self.var_name}",
@@ -79,8 +76,8 @@ class SpinnerProperty(Property, Widget):
                         style = "width: 100%;"
                     ),
                     _class = "form-row"
-                ), {}
-            )
+                )
+            ])
 
         spinner_configs = []
         if self.min:
@@ -90,10 +87,13 @@ class SpinnerProperty(Property, Widget):
         if self.step:
             spinner_configs.append(f"step: {self.step}")
 
-        rendered.prepare = """
+        if len(spinner_configs) > 0:
+            rendered.prepare = """
             $('#node-input-""" + self.var_name + """').spinner({
                 """ + ",\n                ".join(spinner_configs) + """
             });
 """
+        else:
+            rendered.prepare = """$('#node-input-""" + self.var_name + """').spinner({});"""
 
         return rendered

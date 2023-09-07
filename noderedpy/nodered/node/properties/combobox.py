@@ -40,12 +40,11 @@ class ComboBoxProperty(Property, Widget):
     def render(self) -> RenderedWidget:
         rendered = RenderedWidget(
             props = { self.var_name: { "value": self.default, "required": self.required } },
-            props_map = { self.name: self.name },
-            html = "",
-            prepare = "", cancel = "", save = ""
+            props_map = { self.name: self.name }
         )
+
         if self.one_line:
-            rendered.html = hg.render(
+            rendered.elements.append(
                 hg.DIV(
                     hg.LABEL(
                         hg.I(_class = self.display_icon, style = "margin-right:5px;"),
@@ -70,10 +69,10 @@ class ComboBoxProperty(Property, Widget):
                     ),
                     _class = "form-row",
                     style = "display:flex;flex-flow:row;"
-                ), {}
+                )
             )
         else:
-            rendered.html = hg.render(
+            rendered.elements.extend([
                 hg.DIV(
                     hg.LABEL(
                         hg.I(_class = self.display_icon), " ",
@@ -81,8 +80,7 @@ class ComboBoxProperty(Property, Widget):
                     ),
                     _class = "form-row",
                     style = "margin-bottom: 0px;"
-                ), {}
-            ) + hg.render(
+                ),
                 hg.DIV(
                     hg.SELECT(
                         *[
@@ -101,8 +99,8 @@ class ComboBoxProperty(Property, Widget):
                         style = "display:none;"
                     ),
                     _class = "form-row"
-                ), {}
-            )
+                )
+            ])
 
         rendered.prepare = f"""
             $('#node-input-{self.var_name}-select').val($('#node-input-{self.var_name}').val());"""

@@ -26,12 +26,10 @@ class CheckBoxProperty(Property, Widget):
     def render(self) -> RenderedWidget:
         rendered = RenderedWidget(
             props = { self.var_name: { "value": self.default, "required": self.required } },
-            props_map = { self.name: self.name },
-            html = "",
-            prepare = "", cancel = "", save = ""
+            props_map = { self.name: self.name }
         )
 
-        rendered.html = hg.render(
+        rendered.elements.append(
             hg.DIV(
                 hg.LABEL(
                     hg.I(_class = self.display_icon), " ",
@@ -43,7 +41,7 @@ class CheckBoxProperty(Property, Widget):
                     style = "margin-left:10px;width:15px;height:15px;margin-bottom:5px;"
                 ),
                 _class = "form-row"
-            ), {}
+            )
         )
 
         return rendered

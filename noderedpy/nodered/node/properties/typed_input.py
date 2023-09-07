@@ -44,13 +44,11 @@ class TypedInputProperty(Property, Widget):
                     "type": f"{self.name}-typed-input-type",
                     "value": f"{self.name}-typed-input-value"
                 }
-            },
-            html = "",
-            prepare = "", cancel = "", save = ""
+            }
         )
 
         if self.one_line:
-            rendered.html = hg.render(
+            rendered.elements.append(
                 hg.DIV(
                     hg.LABEL(
                         hg.I(_class = self.display_icon, style = "margin-right:5px;"),
@@ -74,10 +72,10 @@ class TypedInputProperty(Property, Widget):
                     ),
                     _class = "form-row",
                     style = "display:flex;flex-flow:row;"
-                ), {}
+                )
             )
         else:
-            rendered.html = hg.render(
+            rendered.elements.extend([
                 hg.DIV(
                     hg.LABEL(
                         hg.I(_class = self.display_icon), " ",
@@ -85,8 +83,7 @@ class TypedInputProperty(Property, Widget):
                     ),
                     _class = "form-row",
                     style = "margin-bottom: 0px;"
-                ), {}
-            ) + hg.render(
+                ),
                 hg.DIV(
                     hg.INPUT(
                         id = f"node-input-{self.var_name}-typed-input",
@@ -104,8 +101,9 @@ class TypedInputProperty(Property, Widget):
                         style = "display:none;"
                     ),
                     _class = "form-row"
-                ), {}
-            )
+                )
+            ])
+
         type_maps = [
             { "value": type, "label": f"{type}:", "hasValue": True }
             for type in self.types

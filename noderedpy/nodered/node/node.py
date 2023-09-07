@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import os, gc, traceback
+import os, htmlgenerator as hg, gc, traceback
 from types import MethodType
 from typing import List
 from ..red.editor.widget import Widget
@@ -51,9 +51,9 @@ class Node:
         with open(os.path.join(node_dir, "lib", f"{self.name}.html"), "w", encoding = "utf-8") as nhw:
             nhw.write(node_html(
                 self.name, self.icon, self.category, self.color,
-                rendered_editor.html, rendered_editor.props,
-                rendered_editor.prepare,
-                rendered_editor.cancel, rendered_editor.save
+                "\n".join([ hg.render(element, {}) for element in rendered_editor.elements ]),
+                rendered_editor.props,
+                rendered_editor.prepare, rendered_editor.cancel, rendered_editor.save
             ))
 
         # write javascript

@@ -35,12 +35,10 @@ class CodeProperty(Property, Widget):
     def render(self) -> RenderedWidget:
         rendered = RenderedWidget(
             props = { self.var_name: { "value": self.default, "required": self.required } },
-            props_map = { self.name: self.name },
-            html = "",
-            prepare = "", cancel = "", save = ""
+            props_map = { self.name: self.name }
         )
 
-        rendered.html = hg.render(
+        rendered.elements.extend([
             hg.DIV(
                 hg.LABEL(
                     hg.I(_class = self.display_icon), " ",
@@ -48,8 +46,7 @@ class CodeProperty(Property, Widget):
                 ),
                 _class = "form-row",
                 style = "margin-bottom: 0px;"
-            ), {}
-        ) + hg.render(
+            ),
             hg.DIV(
                 hg.DIV(
                     id = f"node-input-{self.var_name}",
@@ -57,8 +54,8 @@ class CodeProperty(Property, Widget):
                     style = f"height:{self.height}px"
                 ),
                 _class = "form-row node-text-editor-row"
-            ), {}
-        )
+            )
+        ])
 
         code_configs = [
             f'id: "node-input-{self.var_name}"',
