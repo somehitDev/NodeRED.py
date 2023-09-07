@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 import htmlgenerator as hg
-from typing import Union
+from typing import Union, Literal
 from .property import Property
 from ...red.editor.widget import Widget, RenderedWidget
 
 
 class InputProperty(Property, Widget):
-    def __init__(self, name:str, default:Union[int, float, str] = None, required:bool = False, display_name:str = None, display_icon:str = None, one_line:bool = False):
+    def __init__(self, name:str, default:Union[int, float, str] = None, required:bool = False, input_type:str = "text", display_name:str = None, display_icon:str = None, one_line:bool = False):
         """
         Property to change value
 
@@ -16,6 +16,8 @@ class InputProperty(Property, Widget):
             default value of InputProperty
         required: bool, default False
             set required or not
+        input_type: str, default "text"
+            type of InputProperty html element (for available types, see https://www.w3schools.com/html/html_form_input_types.asp)
         display_name: str, default None
             name to display in Node-RED edit dialog
         display_icon: str, default None
