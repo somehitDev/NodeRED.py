@@ -29,7 +29,16 @@ class Tab(Widget):
     
     @property
     def id(self) -> str:
-        return f"tab-item-{self.title.lower()}"
+        title_for_id = self.title.lower()\
+            .replace(
+                " ", "_"
+            ).replace(
+                ".", "_"
+            ).replace(
+                ":", "_"
+            )
+
+        return f"tab-item-{title_for_id}"
 
     def render(self) -> RenderedWidget:
         elements = []
