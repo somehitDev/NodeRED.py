@@ -148,7 +148,7 @@ class MyWidget(Widget):
     def render(self) -> RenderedWidget:
         return RenderedWidget()
 ```
-- see <a href="">Property</a> or <a href="">Widget</a> for details.
+- see pre-made <a href="https://github.com/oyajiDev/NodeRED.py/tree/master/noderedpy/nodered/node/properties">Properties</a> or <a href="https://github.com/oyajiDev/NodeRED.py/tree/master/noderedpy/nodered/red/editor/ui">Widgets</a> for details.
 
 <br/>
 
