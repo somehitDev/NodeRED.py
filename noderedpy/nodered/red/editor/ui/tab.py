@@ -24,6 +24,10 @@ class Tab(Widget):
     @property
     def title(self) -> str:
         return self.__title
+    
+    @property
+    def id(self) -> str:
+        return f"tab-item-{self.title.lower()}"
 
     def render(self) -> RenderedWidget:
         widget_html = []
@@ -32,7 +36,7 @@ class Tab(Widget):
             html = "",
             prepare = """
             tabs.addTab({
-                id: 'tab-item-""" + self.title.lower() + """',
+                id: '""" + self.id + """',
                 iconClass: '""" + self.__icon + """',
                 label: '""" + self.title + """'
             });
@@ -93,7 +97,7 @@ class Tabs:
             rendered_tabs.save += rendered_tab.save
 
         if len(self.__tabs) > 0:
-            rendered_tabs.prepare += f"\ntabs.activateTab('{self.__tabs[0].title}');"
+            rendered_tabs.prepare += f"\n            tabs.activateTab('{self.__tabs[0].id}');"
 
         rendered_tabs.html = hg.render(
             hg.DIV(
