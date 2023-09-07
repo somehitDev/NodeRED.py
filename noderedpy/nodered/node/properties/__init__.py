@@ -7,7 +7,7 @@ from .code import CodeProperty
 from .spinner import SpinnerProperty
 from .checkbox import CheckBoxProperty
 from .combobox import ComboBoxProperty
-from .typed_input import TypedInputProperty
+from .typedinput import TypedInputProperty
 
 
 __all__ = [

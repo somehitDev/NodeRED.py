@@ -170,4 +170,6 @@ red.start({debug:bool}, {callback:MethodType})
 ✅ add Tab.
 
 🟩 more property types.(processing...)
-  - TypedInput
+  - ✅ TypedInput
+  - 🟩 SearchBox
+  - 🟩 TreeList
