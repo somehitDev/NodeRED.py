@@ -36,6 +36,7 @@ class InputProperty(Property, Widget):
         Property.__init__(self, name, default, required, display_name)
         Widget.__init__(self)
 
+        self.input_type = input_type
         if display_icon is None:
             if isinstance(default, (int, float)):
                 self.display_icon = "fa fa-sort-numeric-asc"
@@ -61,7 +62,7 @@ class InputProperty(Property, Widget):
                     ),
                     hg.INPUT(
                         id = f"node-input-{self.var_name}",
-                        type = "text",
+                        type = self.input_type,
                         style = "margin-left:10px;flex:1;"
                     ),
                     _class = "form-row",
