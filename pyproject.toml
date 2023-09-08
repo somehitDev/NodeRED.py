@@ -12,7 +12,7 @@ dynamic = ["version", "description"]
 dependencies = [
     "psutil==5.9.5",
     "wget==3.2",
-    "Pillow==10.0.0",
+    "Pillow>=9.5.0",
     "htmlgenerator==1.2.28"
 ]
 classifiers = [
