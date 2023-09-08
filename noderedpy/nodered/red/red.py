@@ -326,10 +326,12 @@ class RED:
 
         Parameters
         ----------
-        debug: bool, default True
-            show outputs on console or not
         callback: MethodType, default None
             callback when Node-RED server started
+        debug: bool, default True
+            show outputs on console or not
+        start_browser: bool, default True
+            open editor in system browser or not
         """
 
         # setup user_dir
