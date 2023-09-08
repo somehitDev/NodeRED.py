@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 import os, sys, subprocess, json, shutil
 from glob import glob
-from typing import List, Literal, Union
+from typing import List, Union
+try:
+    from typing import Literal
+except:
+    from typing_extensions import Literal
+
 from types import MethodType
 from ..node.node import Node
 from ..route import Route, StaticRoute

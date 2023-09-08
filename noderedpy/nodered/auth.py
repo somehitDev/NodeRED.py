@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 from dataclasses import dataclass, field
-from typing import Literal, List
+from typing import List
+try:
+    from typing import Literal
+except:
+    from typing_extensions import Literal
 
 
 @dataclass

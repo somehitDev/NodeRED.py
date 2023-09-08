@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 import htmlgenerator as hg, json
-from typing import Dict, Literal, Any, List
+from typing import Dict, Any, List
+try:
+    from typing import Literal
+except:
+    from typing_extensions import Literal
+
 from .property import Property
 from ...red.editor.widget import Widget, RenderedWidget
 

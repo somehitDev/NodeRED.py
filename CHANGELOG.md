@@ -178,6 +178,7 @@
 <br/>
 
 ## version 0.3.0
+- fix wrong lint texts.
 - change "properties" parameter of "register" to "widgets".
 - change "PropertyDivider" to "Divider".
 - add "Tab" widget.
