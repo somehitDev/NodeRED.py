@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import htmlgenerator as hg
-from typing import Union, Literal
+from typing import Union
 from .property import Property
 from ...red.editor.widget import Widget, RenderedWidget
 

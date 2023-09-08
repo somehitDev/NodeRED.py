@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
-from typing import List, Literal
+from typing import List
+try:
+    from typing import Literal
+except:
+    from typing_extensions import Literal
+
 from types import MethodType
 from .nodered.red import RED
 from .nodered.node import Node
