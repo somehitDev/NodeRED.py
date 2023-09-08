@@ -179,6 +179,8 @@
 
 ## version 0.3.0
 - fix wrong lint texts.
+- fix python dependency errors.
+  - now support python>=3.7 correctly.
 - change "properties" parameter of "register" to "widgets".
 - change "PropertyDivider" to "Divider".
 - add "Tab" widget.
