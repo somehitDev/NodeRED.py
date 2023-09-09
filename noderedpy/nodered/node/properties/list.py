@@ -4,7 +4,7 @@ from .property import Property
 from ...red.editor.widget import Widget, RenderedWidget
 
 
-class ListProperty(Property, Widget):
+class List(Property, Widget):
     def __init__(self, name:str, default:list = [], height:int = 250, required:bool = False, display_name:str = None, display_icon:str = None):
         """
         Property to handle list
@@ -42,7 +42,8 @@ class ListProperty(Property, Widget):
                     hg.SPAN(self.display_name)
                 ),
                 _class = "form-row",
-                style = "margin-bottom: 0px;"
+                style = "margin-bottom: 0px;",
+                **{ "for": f"node-input-{self.var_name}-container" }
             ),
             hg.DIV(
                 hg.OL(

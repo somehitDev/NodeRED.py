@@ -10,7 +10,7 @@ from .property import Property
 from ...red.editor.widget import Widget, RenderedWidget
 
 
-class TypedInputProperty(Property, Widget):
+class TypedInput(Property, Widget):
     def __init__(self, name:str, default:Dict[Literal["type", "value"], Any] = {}, types:List[str] = [], required:bool = False, display_name:str = None, display_icon:str = None, one_line:bool = False):
         """
         Property to change value
@@ -52,26 +52,28 @@ class TypedInputProperty(Property, Widget):
             }
         )
 
+        eid = f"node-input-{self.var_name}-typed-input"
         if self.one_line:
             rendered.elements.append(
                 hg.DIV(
                     hg.LABEL(
                         hg.I(_class = self.display_icon, style = "margin-right:5px;"),
                         hg.SPAN(self.display_name),
-                        style = "display:flex;align-items:center;"
+                        style = "display:flex;align-items:center;",
+                        **{ "for": eid }
                     ),
                     hg.INPUT(
-                        id = f"node-input-{self.var_name}-typed-input",
+                        id = eid,
                         type = "text",
                         style = "margin-left:10px;flex:1;"
                     ),
                     hg.INPUT(
-                        id = f"node-input-{self.var_name}-typed-input-type",
+                        id = f"{eid}-type",
                         type = "text",
                         style = "display:none;"
                     ),
                     hg.INPUT(
-                        id = f"node-input-{self.var_name}-typed-input-value",
+                        id = f"{eid}-value",
                         type = "text",
                         style = "display:none;"
                     ),
@@ -87,21 +89,22 @@ class TypedInputProperty(Property, Widget):
                         hg.SPAN(self.display_name)
                     ),
                     _class = "form-row",
-                    style = "margin-bottom: 0px;"
+                    style = "margin-bottom: 0px;",
+                    **{ "for": eid }
                 ),
                 hg.DIV(
                     hg.INPUT(
-                        id = f"node-input-{self.var_name}-typed-input",
+                        id = eid,
                         type = "text",
                         style = "width:100%;"
                     ),
                     hg.INPUT(
-                        id = f"node-input-{self.var_name}-typed-input-type",
+                        id = f"{eid}-type",
                         type = "text",
                         style = "display:none;"
                     ),
                     hg.INPUT(
-                        id = f"node-input-{self.var_name}-typed-input-value",
+                        id = f"{eid}-value",
                         type = "text",
                         style = "display:none;"
                     ),

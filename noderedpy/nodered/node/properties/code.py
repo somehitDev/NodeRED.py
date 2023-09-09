@@ -4,7 +4,7 @@ from .property import Property
 from ...red.editor.widget import Widget, RenderedWidget
 
 
-class CodeProperty(Property, Widget):
+class Code(Property, Widget):
     def __init__(self, name:str, default:str = "", language:str = None, height:int = 250, required:bool = False, display_name:str = None, display_icon:str = None):
         """
         Property to edit code
@@ -45,7 +45,8 @@ class CodeProperty(Property, Widget):
                     hg.SPAN(self.display_name)
                 ),
                 _class = "form-row",
-                style = "margin-bottom: 0px;"
+                style = "margin-bottom: 0px;",
+                **{ "for": f"node-input-{self.var_name}" }
             ),
             hg.DIV(
                 hg.DIV(

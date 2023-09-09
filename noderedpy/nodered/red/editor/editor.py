@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from typing import List, Tuple
+from typing import List
 from .widget import Widget, RenderedWidget
 from ...node.properties.property import Property
-from ...node.properties import InputProperty
+from ...node.properties import Input
 from .ui.tab import Tab, Tabs
 from .ui.divider import Divider
 
@@ -30,7 +30,7 @@ class Editor:
             widgets.insert(0, Divider())
 
         widgets.insert(0,
-            InputProperty("name", "", display_icon = "fa fa-tag", one_line = True)
+            Input("name", "", display_icon = "fa fa-tag", one_line = True)
         )
         if len(tab_widgets) > 0:
             widgets.append(Tabs(tab_widgets))

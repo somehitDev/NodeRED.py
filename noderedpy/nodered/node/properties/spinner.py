@@ -4,7 +4,7 @@ from .property import Property
 from ...red.editor.widget import Widget, RenderedWidget
 
 
-class SpinnerProperty(Property, Widget):
+class Spinner(Property, Widget):
     def __init__(self, name:str, default:float = 0, step:float = None, min:float = None, max:float = None, required:bool = False, display_name:str = None, display_icon:str = None, one_line:bool = False):
         """
         Property to handle float with spinner
@@ -41,16 +41,18 @@ class SpinnerProperty(Property, Widget):
             props_map = { self.name: self.name }
         )
 
+        eid = f"node-input-{self.var_name}"
         if self.one_line:
             rendered.elements.append(
                 hg.DIV(
                     hg.LABEL(
                         hg.I(_class = self.display_icon, style = "margin-right:5px;"),
                         hg.SPAN(self.display_name),
-                        style = "display:flex;align-items:center;margin-right:10px;"
+                        style = "display:flex;align-items:center;margin-right:10px;",
+                        **{ "for": eid }
                     ),
                     hg.INPUT(
-                        id = f"node-input-{self.var_name}",
+                        id = eid,
                         type = "text",
                         style = "width:100%;"
                     ),
@@ -71,7 +73,7 @@ class SpinnerProperty(Property, Widget):
                 ),
                 hg.DIV(
                     hg.INPUT(
-                        id = f"node-input-{self.var_name}",
+                        id = eid,
                         type = "text",
                         style = "width: 100%;"
                     ),

@@ -6,7 +6,7 @@ requirements: pywebview>=3.7.2
 import os, webview
 from noderedpy import (
     RED, REDBuilder, Auth, Node,
-    InputProperty, ListProperty, DictProperty
+    Input, List, Dict
 )
 from noderedpy.decorator import register
 
@@ -16,9 +16,9 @@ if __name__ == "__main__":
         count = 0
 
         @register("test", widgets = [
-            InputProperty("test_prop", "1234"),
-            ListProperty("list_prop", [ 1, 2, 3, 4 ]),
-            DictProperty("dict_prop", { "a": 1 })
+            Input("test_prop", "1234"),
+            List("list_prop", [ 1, 2, 3, 4 ]),
+            Dict("dict_prop", { "a": 1 })
         ])
         def test(node:Node, props:dict, msg:dict) -> dict:
             TotalApp.count += 1

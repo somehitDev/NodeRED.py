@@ -5,7 +5,7 @@ from .property import Property
 from ...red.editor.widget import Widget, RenderedWidget
 
 
-class ComboBoxProperty(Property, Widget):
+class ComboBox(Property, Widget):
     def __init__(self, name:str, items:List[Any], default:Any = None, required:bool = False, display_name:str = None, display_icon:str = None, one_line:bool = False):
         """
         Property to select value from lists
@@ -43,13 +43,15 @@ class ComboBoxProperty(Property, Widget):
             props_map = { self.name: self.name }
         )
 
+        eid = f"node-input-{self.var_name}"
         if self.one_line:
             rendered.elements.append(
                 hg.DIV(
                     hg.LABEL(
                         hg.I(_class = self.display_icon, style = "margin-right:5px;"),
                         hg.SPAN(self.display_name),
-                        style = "display:flex;align-items:center;"
+                        style = "display:flex;align-items:center;",
+                        **{ "for": f"{eid}-select" }
                     ),
                     hg.SELECT(
                         *[
@@ -59,11 +61,11 @@ class ComboBoxProperty(Property, Widget):
                             )
                             for item in self.items
                         ],
-                        id = f"node-input-{self.var_name}-select",
+                        id = f"{eid}-select",
                         style = "margin-left:10px;flex:1;"
                     ),
                     hg.INPUT(
-                        id = f"node-input-{self.var_name}",
+                        id = eid,
                         type = "text",
                         style = "display:none;"
                     ),

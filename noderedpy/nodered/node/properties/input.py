@@ -5,7 +5,7 @@ from .property import Property
 from ...red.editor.widget import Widget, RenderedWidget
 
 
-class InputProperty(Property, Widget):
+class Input(Property, Widget):
     def __init__(self, name:str, default:Union[int, float, str] = None, required:bool = False, input_type:str = "text", display_name:str = None, display_icon:str = None, one_line:bool = False):
         """
         Property to change value
@@ -52,16 +52,19 @@ class InputProperty(Property, Widget):
             props = { self.var_name: { "value": self.default, "required": self.required } },
             props_map = { self.name: self.name }
         )
+
+        eid = f"node-input-{self.var_name}"
         if self.one_line:
             rendered.elements.append(
                 hg.DIV(
                     hg.LABEL(
                         hg.I(_class = self.display_icon, style = "margin-right:5px;"),
                         hg.SPAN(self.display_name),
-                        style = "display:flex;align-items:center;"
+                        style = "display:flex;align-items:center;",
+                        **{ "for": eid }
                     ),
                     hg.INPUT(
-                        id = f"node-input-{self.var_name}",
+                        id = eid,
                         type = self.input_type,
                         style = "margin-left:10px;flex:1;"
                     ),
@@ -77,11 +80,12 @@ class InputProperty(Property, Widget):
                         hg.SPAN(self.display_name)
                     ),
                     _class = "form-row",
-                    style = "margin-bottom: 0px;"
+                    style = "margin-bottom: 0px;",
+                    **{ "for": eid }
                 ),
                 hg.DIV(
                     hg.INPUT(
-                        id = f"node-input-{self.var_name}",
+                        id = eid,
                         type = self.input_type,
                         style = "width: 100%;"
                     ),

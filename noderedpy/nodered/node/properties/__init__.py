@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 
-from .input import InputProperty
-from .list import ListProperty
-from .dict import DictProperty
-from .code import CodeProperty
-from .spinner import SpinnerProperty
-from .checkbox import CheckBoxProperty
-from .combobox import ComboBoxProperty
-from .typedinput import TypedInputProperty
+from .input import Input
+from .list import List
+from .dict import Dict
+from .code import Code
+from .spinner import Spinner
+from .checkbox import CheckBox
+from .combobox import ComboBox
+from .typedinput import TypedInput
 
 
 __all__ = [
-    "InputProperty", "ListProperty", "DictProperty",
-    "CodeProperty",
-    "SpinnerProperty", "CheckBoxProperty", "ComboBoxProperty",
-    "TypedInputProperty"
+    "Input", "List", "Dict",
+    "Code",
+    "Spinner", "CheckBox", "ComboBox",
+    "TypedInput"
 ]

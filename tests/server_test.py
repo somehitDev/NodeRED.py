@@ -3,9 +3,9 @@ import os
 from noderedpy import (
     REDBuilder, RED, Auth, Node,
     Tab, Divider,
-    InputProperty, ListProperty, DictProperty, CodeProperty,
-    SpinnerProperty, CheckBoxProperty, ComboBoxProperty,
-    TypedInputProperty
+    Input, List, Dict, Code,
+    Spinner, CheckBox, ComboBox,
+    TypedInput
 )
 from noderedpy.decorator import register, route
 
@@ -15,9 +15,9 @@ if __name__ == "__main__":
         count = 0
 
         @register("test", widgets = [
-            InputProperty("test_prop", "1234"),
-            ListProperty("list_prop", [ 1, 2, 3, 4 ]),
-            DictProperty("dict_prop", { "a": 1 })
+            Input("test_prop", "1234"),
+            List("list_prop", [ 1, 2, 3, 4 ]),
+            Dict("dict_prop", { "a": 1 })
         ])
         def test(node:Node, props:dict, msg:dict) -> dict:
             TotalApp.count += 1
@@ -36,25 +36,25 @@ if __name__ == "__main__":
                 Tab(
                     "common",
                     [
-                        InputProperty("input_prop", "input property"),
-                        ListProperty("list_prop", [ "list", "property" ], 150),
-                        DictProperty("dict_prop", { "dict": "property" }, 100),
-                        TypedInputProperty("typed_input_prop", { "type": "type1", "value": "value" }, types = [ "type1", "type2" ])
+                        Input("input_prop", "input property"),
+                        List("list_prop", [ "list", "property" ], 150),
+                        Dict("dict_prop", { "dict": "property" }, 100),
+                        TypedInput("typed_input_prop", { "type": "type1", "value": "value" }, types = [ "type1", "type2" ])
                     ]
                 ),
                 Tab(
                     "html",
                     [
-                        SpinnerProperty("spinner_prop", 1, one_line = True),
-                        CheckBoxProperty("chkbox_prop", True),
-                        ComboBoxProperty("cbox_prop", [ "combobox", "property" ], one_line = True),
+                        Spinner("spinner_prop", 1, one_line = True),
+                        CheckBox("chkbox_prop", True),
+                        ComboBox("cbox_prop", [ "combobox", "property" ], one_line = True),
                     ],
                     icon = "fa fa-html5"
                 ),
                 Tab(
                     "code",
                     [
-                        CodeProperty("code_prop", "print(1234)", "python")
+                        Code("code_prop", "print(1234)", "python")
                     ],
                     icon = "fa fa-code"
                 )

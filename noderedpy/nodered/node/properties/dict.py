@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import json
 from typing import Union
-from .code import CodeProperty
+from .code import Code
 
 
-class DictProperty(CodeProperty):
+class Dict(Code):
     def __init__(self, name:str, default:Union[dict, str] = {}, height:int = 250, required:bool = False, display_name:str = None, display_icon:str = None):
         """
         Property to handle dict

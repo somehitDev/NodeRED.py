@@ -4,7 +4,7 @@ from .property import Property
 from ...red.editor.widget import Widget, RenderedWidget
 
 
-class CheckBoxProperty(Property, Widget):
+class CheckBox(Property, Widget):
     def __init__(self, name:str, default:bool = False, required:bool = False, display_name:str = None, display_icon:str = None):
         """
         Property to handle checked state
@@ -33,7 +33,8 @@ class CheckBoxProperty(Property, Widget):
             hg.DIV(
                 hg.LABEL(
                     hg.I(_class = self.display_icon), " ",
-                    hg.SPAN(self.display_name)
+                    hg.SPAN(self.display_name),
+                    **{ "for": f"node-input-{self.var_name}" }
                 ),
                 hg.INPUT(
                     id = f"node-input-{self.var_name}",
