@@ -19,6 +19,7 @@
 <br/><br/>
 
 ## 🎛️ requirements
+- Node-RED 3.x
 - node.js 18.16.1 or higher(latest stable)
   - nodered.py 0.2.6 or higher, automatically download from internet if no node.js installed
 - python 3.7 or higher
