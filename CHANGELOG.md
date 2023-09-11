@@ -184,6 +184,7 @@
 - change "properties" parameter of "register" to "widgets".
 - change "PropertyDivider" to "Divider".
 - add "Tab" widget.
+- add "tooltip" parameter to Property.
 - add "node_globals" to "RED", "REDBuilder".
 - fix module tree.
   - split "RED" and "REDBuilder" script file.
@@ -191,8 +192,8 @@
     - add "TypedInputProperty".
   - split template functions to each script file.
   - all major classes can access from top of module.
-- update "README.md".
-- update tests.
 - add Node-RED variables to property value.
   - "`$msg.{name}`" or "`$msg[{name}]`" treats as "{name}" of message.
   - "`$global.{name}`" or "`$global[{name}]`" treats as "{name}" of Node-RED global variables.
+- update "README.md".
+- update tests.

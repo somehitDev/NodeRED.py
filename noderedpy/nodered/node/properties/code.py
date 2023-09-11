@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 import htmlgenerator as hg
-from .property import Property
-from ...red.editor.widget import Widget, RenderedWidget
+from .property import Property, RenderedProperty
 
 
-class Code(Property, Widget):
-    def __init__(self, name:str, default:str = "", language:str = None, height:int = 250, required:bool = False, display_name:str = None, display_icon:str = None):
+class Code(Property):
+    def __init__(self, name:str, default:str = "", language:str = None, height:int = 250, required:bool = False, tooltip:str = "", display_name:str = None, display_icon:str = None):
         """
         Property to edit code
 
@@ -19,6 +18,8 @@ class Code(Property, Widget):
             height to display in Node-RED edit dialog
         required: bool, default False
             set required or not
+        tooltip: str, default ""
+            tooltip of CodeProperty
         display_name: str, default None
             name to display in Node-RED edit dialog
         display_icon: str, default None
@@ -27,17 +28,17 @@ class Code(Property, Widget):
         if not isinstance(default, str):
             raise TypeError("CodeProperty can accept types: [ 'dict', 'json string' ]")
         
-        Property.__init__(self, name, default, required, display_name, display_icon if display_icon else "fa fa-code")
-        Widget.__init__(self)
+        super().__init__(name, default, required, tooltip, display_name, display_icon if display_icon else "fa fa-code")
         self.language, self.height =\
             language, height
 
-    def render(self) -> RenderedWidget:
-        rendered = RenderedWidget(
+    def render(self) -> RenderedProperty:
+        rendered = RenderedProperty(
             props = { self.var_name: { "value": self.default, "required": self.required } },
             props_map = { self.name: self.name }
         )
 
+        eid = f"node-input-{self.var_name}"
         rendered.elements.extend([
             hg.DIV(
                 hg.LABEL(
@@ -46,11 +47,11 @@ class Code(Property, Widget):
                 ),
                 _class = "form-row",
                 style = "margin-bottom: 0px;",
-                **{ "for": f"node-input-{self.var_name}" }
+                **{ "for": eid, "title": self.tooltip }
             ),
             hg.DIV(
                 hg.DIV(
-                    id = f"node-input-{self.var_name}",
+                    id = eid,
                     _class = "node-text-editor",
                     style = f"height:{self.height}px"
                 ),

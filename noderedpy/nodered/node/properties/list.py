@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 import htmlgenerator as hg
-from .property import Property
-from ...red.editor.widget import Widget, RenderedWidget
+from .property import Property, RenderedProperty
 
 
-class List(Property, Widget):
-    def __init__(self, name:str, default:list = [], height:int = 250, required:bool = False, display_name:str = None, display_icon:str = None):
+class List(Property):
+    def __init__(self, name:str, default:list = [], height:int = 250, required:bool = False, tooltip:str = "", display_name:str = None, display_icon:str = None):
         """
         Property to handle list
 
@@ -17,6 +16,8 @@ class List(Property, Widget):
             height to display in Node-RED edit dialog
         required: bool, default False
             set required or not
+        tooltip: str, default ""
+            tooltip for ListProperty
         display_name: str, default None
             name to display in Node-RED edit dialog
         display_icon: str, default None
@@ -25,16 +26,16 @@ class List(Property, Widget):
         if not isinstance(default, list):
             raise TypeError("ListProperty can accept type: 'list'")
 
-        Property.__init__(self, name, default, required, display_name, display_icon if display_icon else "fa fa-list-ul")
-        Widget.__init__(self)
+        super().__init__(name, default, required, tooltip, display_name, display_icon if display_icon else "fa fa-list-ul")
         self.height = height
 
-    def render(self) -> RenderedWidget:
-        rendered = RenderedWidget(
+    def render(self) -> RenderedProperty:
+        rendered = RenderedProperty(
             props = { self.var_name: { "value": self.default, "required": self.required } },
             props_map = { self.name: self.name }
         )
 
+        eid = f"node-input-{self.var_name}"
         rendered.elements.extend([
             hg.DIV(
                 hg.LABEL(
@@ -43,14 +44,14 @@ class List(Property, Widget):
                 ),
                 _class = "form-row",
                 style = "margin-bottom: 0px;",
-                **{ "for": f"node-input-{self.var_name}-container" }
+                **{ "for": f"{eid}-container", "title": self.tooltip }
             ),
             hg.DIV(
                 hg.OL(
-                    id = f"node-input-{self.var_name}-container",
+                    id = f"{eid}-container",
                     style = f"height:{self.height}px;"
                 ),
-                _class = f"form-row node-input-{self.var_name}-container-row"
+                _class = f"form-row {eid}-container-row"
             )
         ])
         rendered.prepare = """

@@ -20,10 +20,10 @@ class Editor:
         widgets:List[Widget] = []
         tab_widgets:List[Tab] = []
         for widget in self.__widgets:
-            if isinstance(widget, (Property, Divider)):
-                widgets.append(widget)
-            else:
+            if isinstance(widget, Tab):
                 tab_widgets.append(widget)
+            elif isinstance(widget, Widget):
+                widgets.append(widget)
 
         # append Name property
         if len(widgets) > 0 or len(tab_widgets) > 0:

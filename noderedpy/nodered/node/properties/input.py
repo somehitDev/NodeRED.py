@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 import htmlgenerator as hg
 from typing import Union
-from .property import Property
-from ...red.editor.widget import Widget, RenderedWidget
+from .property import Property, RenderedProperty
 
 
-class Input(Property, Widget):
-    def __init__(self, name:str, default:Union[int, float, str] = None, required:bool = False, input_type:str = "text", display_name:str = None, display_icon:str = None, one_line:bool = False):
+class Input(Property):
+    def __init__(self, name:str, default:Union[int, float, str] = None, required:bool = False, input_type:str = "text", tooltip:str = "", display_name:str = None, display_icon:str = None, one_line:bool = False):
         """
         Property to change value
 
@@ -18,6 +17,8 @@ class Input(Property, Widget):
             set required or not
         input_type: str, default "text"
             type of InputProperty html element (for available types, see https://www.w3schools.com/html/html_form_input_types.asp)
+        tooltip: str, default ""
+            tooltip of InputProperty
         display_name: str, default None
             name to display in Node-RED edit dialog
         display_icon: str, default None
@@ -33,8 +34,7 @@ class Input(Property, Widget):
         elif not isinstance(default, (int, float, str)):
             raise TypeError("InputProperty can accept types: [ 'int', 'float', 'str' ]")
 
-        Property.__init__(self, name, default, required, display_name)
-        Widget.__init__(self)
+        super().__init__(name, default, required, tooltip, display_name)
 
         self.input_type = input_type
         if display_icon is None:
@@ -47,8 +47,8 @@ class Input(Property, Widget):
 
         self.one_line = one_line
 
-    def render(self) -> RenderedWidget:
-        rendered = RenderedWidget(
+    def render(self) -> RenderedProperty:
+        rendered = RenderedProperty(
             props = { self.var_name: { "value": self.default, "required": self.required } },
             props_map = { self.name: self.name }
         )
@@ -61,7 +61,7 @@ class Input(Property, Widget):
                         hg.I(_class = self.display_icon, style = "margin-right:5px;"),
                         hg.SPAN(self.display_name),
                         style = "display:flex;align-items:center;",
-                        **{ "for": eid }
+                        **{ "for": eid, "title": self.tooltip }
                     ),
                     hg.INPUT(
                         id = eid,
@@ -81,7 +81,7 @@ class Input(Property, Widget):
                     ),
                     _class = "form-row",
                     style = "margin-bottom: 0px;",
-                    **{ "for": eid }
+                    **{ "for": eid, "title": self.tooltip }
                 ),
                 hg.DIV(
                     hg.INPUT(

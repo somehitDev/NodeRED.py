@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 import htmlgenerator as hg
 from typing import List, Any
-from .property import Property
-from ...red.editor.widget import Widget, RenderedWidget
+from .property import Property, RenderedProperty
 
 
-class ComboBox(Property, Widget):
-    def __init__(self, name:str, items:List[Any], default:Any = None, required:bool = False, display_name:str = None, display_icon:str = None, one_line:bool = False):
+class ComboBox(Property):
+    def __init__(self, name:str, items:List[Any], default:Any = None, required:bool = False, tooltip:str = "", display_name:str = None, display_icon:str = None, one_line:bool = False):
         """
         Property to select value from lists
 
@@ -18,6 +17,8 @@ class ComboBox(Property, Widget):
             default value of ComboBoxProperty
         required: bool, default False
             set required or not
+        tooltip: str, default ""
+            tooltip of ComboBoxProperty
         display_name: str, default None
             name to display in Node-RED edit dialog
         display_icon: str, default None
@@ -32,13 +33,12 @@ class ComboBox(Property, Widget):
             else:
                 default = ""
         
-        Property.__init__(self, name, default, required, display_name, display_icon if display_icon else "fa fa-filter")
-        Widget.__init__(self)
+        super().__init__(name, default, required, tooltip, display_name, display_icon if display_icon else "fa fa-filter")
         self.items = items
         self.one_line = one_line
 
-    def render(self) -> RenderedWidget:
-        rendered = RenderedWidget(
+    def render(self) -> RenderedProperty:
+        rendered = RenderedProperty(
             props = { self.var_name: { "value": self.default, "required": self.required } },
             props_map = { self.name: self.name }
         )
@@ -51,7 +51,7 @@ class ComboBox(Property, Widget):
                         hg.I(_class = self.display_icon, style = "margin-right:5px;"),
                         hg.SPAN(self.display_name),
                         style = "display:flex;align-items:center;",
-                        **{ "for": f"{eid}-select" }
+                        **{ "for": f"{eid}-select", "title": self.tooltip }
                     ),
                     hg.SELECT(
                         *[
@@ -78,7 +78,8 @@ class ComboBox(Property, Widget):
                 hg.DIV(
                     hg.LABEL(
                         hg.I(_class = self.display_icon), " ",
-                        hg.SPAN(self.display_name)
+                        hg.SPAN(self.display_name),
+                        **{ "for": eid, "title": self.tooltip }
                     ),
                     _class = "form-row",
                     style = "margin-bottom: 0px;"

@@ -5,7 +5,7 @@ from .code import Code
 
 
 class Dict(Code):
-    def __init__(self, name:str, default:Union[dict, str] = {}, height:int = 250, required:bool = False, display_name:str = None, display_icon:str = None):
+    def __init__(self, name:str, default:Union[dict, str] = {}, height:int = 250, required:bool = False, tooltip:str = "", display_name:str = None, display_icon:str = None):
         """
         Property to handle dict
 
@@ -17,6 +17,8 @@ class Dict(Code):
             height to display in Node-RED edit dialog
         required: bool, default False
             set required or not
+        tooltip: str, default ""
+            tooltip of DictProperty
         display_name: str, default None
             name to display in Node-RED edit dialog
         display_icon: str, default None
@@ -37,4 +39,4 @@ class Dict(Code):
         if isinstance(default, dict):
             default = json.dumps(default, indent = 4)
 
-        super().__init__(name, default, "json", height, required, display_name, display_icon if display_icon else "fa fa-file-code-o")
+        super().__init__(name, default, "json", height, required, tooltip, display_name, display_icon if display_icon else "fa fa-file-code-o")

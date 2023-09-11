@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 import htmlgenerator as hg
-from .property import Property
-from ...red.editor.widget import Widget, RenderedWidget
+from .property import Property, RenderedProperty
 
 
-class Spinner(Property, Widget):
-    def __init__(self, name:str, default:float = 0, step:float = None, min:float = None, max:float = None, required:bool = False, display_name:str = None, display_icon:str = None, one_line:bool = False):
+class Spinner(Property):
+    def __init__(self, name:str, default:float = 0, step:float = None, min:float = None, max:float = None, required:bool = False, tooltip:str = "", display_name:str = None, display_icon:str = None, one_line:bool = False):
         """
         Property to handle float with spinner
 
@@ -21,6 +20,8 @@ class Spinner(Property, Widget):
             max value for spinner
         required: bool, default False
             set required or not
+        tooltip: str, default ""
+            tooltip of SpinnerProperty
         display_name: str, default None
             name to display in Node-RED edit dialog
         display_icon: str, default None
@@ -29,14 +30,13 @@ class Spinner(Property, Widget):
         if not isinstance(default, (int, float)):
             raise TypeError("SpinnerProperty can accept types: [ 'int', 'float' ]")
 
-        Property.__init__(self, name, default, required, display_name, display_icon if display_icon else "fa fa-random")
-        Widget.__init__(self)
+        super().__init__(name, default, required, tooltip, display_name, display_icon if display_icon else "fa fa-random")
         self.step, self.min, self.max =\
             step, min, max
         self.one_line = one_line
 
-    def render(self) -> RenderedWidget:
-        rendered = RenderedWidget(
+    def render(self) -> RenderedProperty:
+        rendered = RenderedProperty(
             props = { self.var_name: { "value": self.default, "required": self.required } },
             props_map = { self.name: self.name }
         )
@@ -49,7 +49,7 @@ class Spinner(Property, Widget):
                         hg.I(_class = self.display_icon, style = "margin-right:5px;"),
                         hg.SPAN(self.display_name),
                         style = "display:flex;align-items:center;margin-right:10px;",
-                        **{ "for": eid }
+                        **{ "for": eid, "title": self.tooltip }
                     ),
                     hg.INPUT(
                         id = eid,
@@ -66,7 +66,8 @@ class Spinner(Property, Widget):
                 hg.DIV(
                     hg.LABEL(
                         hg.I(_class = self.display_icon), " ",
-                        hg.SPAN(self.display_name)
+                        hg.SPAN(self.display_name),
+                        **{ "for": eid, "title": self.tooltip }
                     ),
                     _class = "form-row",
                     style = "margin-bottom: 0px;"

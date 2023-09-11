@@ -20,7 +20,7 @@
 
 ## 🎛️ requirements
 - Node-RED 3.x
-- node.js 18.16.1 or higher(latest stable)
+- node.js 16.x or higher(tested unto 18.x)
   - nodered.py 0.2.6 or higher, automatically download from internet if no node.js installed
 - python 3.7 or higher
 - tested on
@@ -29,7 +29,7 @@
 | --------------- | ------ | ---- |
 | Mac 13(Ventura) |   ✅   |  ✅  |
 | Windows 10      |   ✅   |  ✅  |
-| Linux(RPI)      |   ✅   |  ✅  |
+| Linux(RPI/ARM)  |   ✅   |  ✅  |
 
 <br/><br/>
 
@@ -105,6 +105,33 @@ red.register("test", api.test)
 ```
 - See <a href="https://github.com/oyajiDev/NodeRED.py/blob/08b2295ab537be97ad9e9a2f94154cdcb36685d0/noderedpy/_property.py">noderedpy._property</a> for details of "Property"
 - See <a href="https://github.com/oyajiDev/NodeRED.py/blob/master/tests/server_test.py">example</a> for details.
+
+<br/>
+
+### custom Property/Widget
+```python
+import htmlgenerator as hg
+from noderedpy.nodered.node.properties.property import Property, RenderedProperty
+from noderedpy.nodered.red.editor.widget import Widget, RenderedWidget
+
+# custom property
+class MyProperty(Property):
+    def __init__(self):
+        super().__init__(**{property_kwargs})
+
+    def render(self) -> RenderedProperty:
+        # abstract method for node creation
+        return RenderedProperty(**{kwargs})
+
+# custom widget
+class MyWidget(Widget):
+    def __init__(self):
+        super().__init__(**{widget_kwargs})
+
+    def render(self) -> RenderedWidget:
+        # abstract method for node creation
+        return RenderedWidget(**{kwargs})
+```
 
 <br/>
 

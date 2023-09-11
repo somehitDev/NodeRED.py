@@ -6,12 +6,11 @@ try:
 except:
     from typing_extensions import Literal
 
-from .property import Property
-from ...red.editor.widget import Widget, RenderedWidget
+from .property import Property, RenderedProperty
 
 
-class TypedInput(Property, Widget):
-    def __init__(self, name:str, default:Dict[Literal["type", "value"], Any] = {}, types:List[str] = [], required:bool = False, display_name:str = None, display_icon:str = None, one_line:bool = False):
+class TypedInput(Property):
+    def __init__(self, name:str, default:Dict[Literal["type", "value"], Any] = {}, types:List[str] = [], required:bool = False, tooltip:str = "", display_name:str = None, display_icon:str = None, one_line:bool = False):
         """
         Property to change value
 
@@ -23,14 +22,14 @@ class TypedInput(Property, Widget):
             types of TypedInputProperty
         required: bool, default False
             set required or not
+        tooltip: str, default ""
+            tooltip of TypedInputProperty
         display_name: str, default None
             name to display in Node-RED edit dialog
         display_icon: str, default None
             icon to display in Node-RED edit dialog (for available icons, see https://fontawesome.com/v4/icons/)
         """
-        Property.__init__(self, name, default, required, display_name, display_icon if display_icon else "fa fa-sort-alpha-asc")
-        Widget.__init__(self)
-
+        super().__init__(name, default, required, tooltip, display_name, display_icon if display_icon else "fa fa-sort-alpha-asc")
         self.default = {
             "type": self.default.pop("type", types[0] if len(types) > 0 else ""),
             "value": self.default.pop("value", None)
@@ -38,8 +37,8 @@ class TypedInput(Property, Widget):
         self.types = types
         self.one_line = one_line
 
-    def render(self) -> RenderedWidget:
-        rendered = RenderedWidget(
+    def render(self) -> RenderedProperty:
+        rendered = RenderedProperty(
             props = {
                 f"{self.var_name}-typed-input-type": { "value": self.default["type"] },
                 f"{self.var_name}-typed-input-value": { "value": self.default["value"], "required": self.required }
@@ -60,7 +59,7 @@ class TypedInput(Property, Widget):
                         hg.I(_class = self.display_icon, style = "margin-right:5px;"),
                         hg.SPAN(self.display_name),
                         style = "display:flex;align-items:center;",
-                        **{ "for": eid }
+                        **{ "for": eid, "title": self.tooltip }
                     ),
                     hg.INPUT(
                         id = eid,
@@ -90,7 +89,7 @@ class TypedInput(Property, Widget):
                     ),
                     _class = "form-row",
                     style = "margin-bottom: 0px;",
-                    **{ "for": eid }
+                    **{ "for": eid, "title": self.tooltip }
                 ),
                 hg.DIV(
                     hg.INPUT(
