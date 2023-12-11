@@ -181,6 +181,8 @@
 - fix wrong lint texts.
 - fix python dependency errors.
   - now support python>=3.7 correctly.
+- fix cache_dir path error in windows.
+  - change '\' to '\\'
 - change "properties" parameter of "register" to "widgets".
 - change "PropertyDivider" to "Divider".
 - add "Tab" widget.

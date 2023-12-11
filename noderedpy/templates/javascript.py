@@ -178,4 +178,4 @@ ${err.message}`);
     RED.nodes.registerType("{$name}", fnNode);
 }
 """.replace("{$name}", name).replace("{$prop_names}", str(prop_names))\
-    .replace("{$cache_dir}", cache_dir)
+    .replace("{$cache_dir}", cache_dir.replace("\\", "\\\\"))
