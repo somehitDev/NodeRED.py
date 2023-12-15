@@ -274,7 +274,7 @@ class RED:
                     
                     os.remove(node_input_file)
                     break
-                except json.JSONDecodeError:
+                except ( json.JSONDecodeError, FileNotFoundError ):
                     pass
 
             node = list(filter(lambda n: n.name == input_data["name"], RED.registered_nodes))[0]
