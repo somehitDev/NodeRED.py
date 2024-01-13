@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-import os, htmlgenerator as hg, gc, traceback
+import os, htmlgenerator as hg, gc, json, traceback
 from types import MethodType
 from typing import List
+from threading import Thread
 from ..red.editor.widget import Widget
 from ..red.editor.editor import Editor
 from .communicator import NodeCommunicator
@@ -58,27 +59,28 @@ class Node:
 
         # write javascript
         with open(os.path.join(node_dir, "lib", f"{self.name}.js"), "w", encoding = "utf-8") as njw:
-            njw.write(node_js(self.name, [ name for name in rendered_editor.props.keys() if not name == "name" ], node_red_user_cache_dir))
+            njw.write(node_js(self.name, [ name for name in rendered_editor.props.keys() if not name == "np-var_name" ], node_red_user_cache_dir))
 
-    def run(self, raw_props:dict, msg:dict) -> dict:
+    def __run(self, raw_props:dict, msg:dict, output_file:str):
         gc.enable()
 
         print(f"\n{self.name} started\n===================================")
         try:
             props = {}
             for name, map_info in self.__props_map.items():
-                if isinstance(map_info, list):
-                    props[name] = [
-                        raw_props[var_name]
-                        for var_name in map_info
-                    ]
-                elif isinstance(map_info, dict):
-                    props[name] = {
-                        key: raw_props[var_name]
-                        for key, var_name in map_info.items()
-                    }
-                else:
-                    props[name] = raw_props[map_info]
+                if not name == "name":
+                    if isinstance(map_info, list):
+                        props[name] = [
+                            raw_props[var_name]
+                            for var_name in map_info
+                        ]
+                    elif isinstance(map_info, dict):
+                        props[name] = {
+                            key: raw_props[var_name]
+                            for key, var_name in map_info.items()
+                        }
+                    else:
+                        props[name] = raw_props[map_info]
 
             resp = self.__node_func(self.__communicator, props, msg)
             del props
@@ -86,7 +88,16 @@ class Node:
 
             resp.update({ "state": "success", "name": self.name })
             gc.collect()
-
-            return resp
         except:
-            return { "state": "fail", "name": self.name, "message": traceback.format_exc() }
+            resp = { "state": "fail", "name": self.name, "message": traceback.format_exc() }
+
+        try:
+            with open(output_file, "w", encoding = "utf-8") as ofw:
+                json.dump(resp, ofw, indent = 4)
+        except:
+            os.remove(output_file)
+            resp["req"]["body"] = {}
+            self.__write_node_output(output_file, resp)
+
+    def run(self, raw_props:dict, msg:dict, output_file:str):
+        Thread(target = self.__run, args = ( raw_props, msg, output_file ), daemon = True).start()

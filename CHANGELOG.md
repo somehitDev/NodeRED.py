@@ -199,3 +199,4 @@
   - "`$global.{name}`" or "`$global[{name}]`" treats as "{name}" of Node-RED global variables.
 - update "README.md".
 - update tests.
+- node runs own function with Process class.

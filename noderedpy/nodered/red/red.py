@@ -279,10 +279,11 @@ class RED:
 
             node = list(filter(lambda n: n.name == input_data["name"], RED.registered_nodes))[0]
 
-            self.__write_node_output(
-                node_output_file,
-                node.run(input_data["props"], input_data["msg"])
-            )
+            node.run(input_data["props"], input_data["msg"], node_output_file)
+            # self.__write_node_output(
+            #     node_output_file,
+            #     node.run(input_data["props"], input_data["msg"])
+            # )
 
     # write output(node)
     def __write_node_output(self, output_file:str, res:dict):
