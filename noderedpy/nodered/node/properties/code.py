@@ -26,7 +26,7 @@ class Code(Property):
             icon to display in Node-RED edit dialog (for available icons, see https://fontawesome.com/v4/icons/)
         """
         if not isinstance(default, str):
-            raise TypeError("CodeProperty can accept types: [ 'dict', 'json string' ]")
+            raise TypeError("CodeProperty can accept types: [ 'text', 'dict', 'json string' ]")
         
         super().__init__(name, default, required, tooltip, display_name, display_icon if display_icon else "fa fa-code")
         self.language, self.height =\

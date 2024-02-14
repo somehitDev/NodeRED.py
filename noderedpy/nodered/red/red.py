@@ -72,7 +72,7 @@ class RED:
             if not os.path.exists(self.__node_dir):
                 import platform, wget, zipfile, tarfile
 
-                node_version = "18.16.1"
+                node_version = "20.11.0"
                 if not os.path.exists(self.__temp_dir):
                     os.mkdir(self.__temp_dir)
 
