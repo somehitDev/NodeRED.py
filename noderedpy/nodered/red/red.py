@@ -72,7 +72,7 @@ class RED:
             if not os.path.exists(self.__node_dir):
                 import platform, wget, zipfile, tarfile
 
-                node_version = "20.11.0"
+                node_version = "18.16.1"
                 if not os.path.exists(self.__temp_dir):
                     os.mkdir(self.__temp_dir)
 
@@ -87,7 +87,7 @@ class RED:
                         zipfile.ZipFile(node_bin_zip).extractall(self.__temp_dir)
                         shutil.move(os.path.join(self.__temp_dir, f"node-v{node_version}-win-x64"), self.__node_dir)
 
-                    self.__npm_path = os.path.join(self.__node_dir, "npm.exe")
+                    self.__npm_path = os.path.join(self.__node_dir, "npm.cmd")
                     self.__node_path = os.path.join(self.__node_dir, "node.exe")
                 elif sys.platform == "darwin":
                     node_bin_zip = os.path.join(self.__temp_dir, "node.tar.gz")
@@ -135,11 +135,9 @@ class RED:
                 if not { "index.js", "package.json" }.issubset(set(os.listdir(node_red_dir))):
                     raise RuntimeError("Target `node_red_dir` is not Node-RED dir format!")
 
-                shutil.copyfile(os.path.join(__path__[0], "node-red-starter", "route.js"), os.path.join(node_red_dir, "route.js"))
                 shutil.copyfile(os.path.join(__path__[0], "node-red-starter", "index.js"), os.path.join(node_red_dir, "index.js"))
             else:
                 os.mkdir(node_red_dir)
-                shutil.copyfile(os.path.join(__path__[0], "node-red-starter", "route.js"), os.path.join(node_red_dir, "route.js"))
                 shutil.copyfile(os.path.join(__path__[0], "node-red-starter", "index.js"), os.path.join(node_red_dir, "index.js"))
                 shutil.copyfile(os.path.join(__path__[0], "node-red-starter", "package.json"), os.path.join(node_red_dir, "package.json"))
 

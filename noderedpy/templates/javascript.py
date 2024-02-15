@@ -58,7 +58,7 @@ module.exports = function(RED) {
             }
             if (message.res != undefined && typeof(message.res) == "object") {
                 messageCache.res = message.res;
-                delete message.res;            
+                delete message.res;
             }
 
             var configToSend = {};
